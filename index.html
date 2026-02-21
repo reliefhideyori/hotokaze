@@ -451,6 +451,101 @@
       margin-top: 0.15rem;
     }
 
+    /* ── VISION CARD ── */
+    .vision-card {
+      background: linear-gradient(145deg, var(--dark3), rgba(26,34,53,0.8));
+      border: 1px solid rgba(79,156,249,0.2);
+      box-shadow: 0 0 40px rgba(79,156,249,0.06);
+    }
+
+    .vision-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      font-weight: 700;
+      color: var(--accent);
+      border: 1px solid rgba(79,156,249,0.3);
+      padding: 0.3rem 0.9rem;
+      border-radius: 2rem;
+      margin-bottom: 1.2rem;
+      text-transform: uppercase;
+    }
+
+    .vision-badge::before {
+      content: '';
+      width: 5px; height: 5px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+
+    .vision-headline {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1.45;
+      margin-bottom: 0.9rem;
+      background: linear-gradient(135deg, var(--text) 40%, var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .vision-desc {
+      font-size: 0.83rem;
+      color: var(--muted);
+      line-height: 1.85;
+      margin-bottom: 1.6rem;
+    }
+
+    .vision-roadmap {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 1.1rem 1rem;
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(79,156,249,0.1);
+      border-radius: 0.9rem;
+    }
+
+    .vr-step {
+      flex: 1;
+      text-align: center;
+    }
+
+    .vr-icon {
+      font-size: 1.25rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .vr-label {
+      font-size: 0.68rem;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    .vr-sub {
+      font-size: 0.6rem;
+      color: var(--accent);
+      margin-top: 0.25rem;
+      letter-spacing: 0.05em;
+    }
+
+    .vr-arrow {
+      color: var(--gold);
+      font-size: 0.9rem;
+      flex-shrink: 0;
+      opacity: 0.7;
+    }
+
+    /* mobile-only line break */
+    .sp-br { display: none; }
+
+    @media (max-width: 768px) {
+      .sp-br { display: block; }
+    }
+
     /* ── STRENGTHS ── */
     #strengths {
       background: var(--dark2);
@@ -1268,11 +1363,31 @@
     </div>
 
     <div class="about-visual">
-      <div class="about-card">
-        <p class="about-card-text">
-          <strong>【将来の展望】</strong><br><br>
-          本事業（LP/HPグロース）を入り口として顧客のビジネスに深く伴走し、ゆくゆくは<strong>システム開発、アプリ開発、AI開発</strong>など、顧客のビジネスを総合的に飛躍させるテクノロジーパートナーへの展開を見据えます。
+      <div class="about-card vision-card">
+        <div class="vision-badge">Future Vision</div>
+        <h3 class="vision-headline">テクノロジー<br>パートナーへ</h3>
+        <p class="vision-desc">
+          LP/HPグロースを入り口に顧客ビジネスへ深く伴走し、ゆくゆくはシステム・アプリ・AI開発まで、ビジネスを総合的に飛躍させるパートナーへ展開します。
         </p>
+        <div class="vision-roadmap">
+          <div class="vr-step">
+            <div class="vr-icon">🌐</div>
+            <div class="vr-label">LP/HP<br>グロース</div>
+            <div class="vr-sub">現在の入口</div>
+          </div>
+          <div class="vr-arrow">›</div>
+          <div class="vr-step">
+            <div class="vr-icon">⚙️</div>
+            <div class="vr-label">システム<br>アプリ開発</div>
+            <div class="vr-sub">次のステップ</div>
+          </div>
+          <div class="vr-arrow">›</div>
+          <div class="vr-step">
+            <div class="vr-icon">🤖</div>
+            <div class="vr-label">AI開発</div>
+            <div class="vr-sub">目指す未来</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1364,10 +1479,9 @@
     <div style="position:absolute; inset:0; background-image:linear-gradient(rgba(79,156,249,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(79,156,249,0.03) 1px, transparent 1px); background-size:40px 40px; pointer-events:none;"></div>
     <p style="font-family:'Noto Serif JP',serif; font-size:clamp(1.5rem,4vw,3rem); font-weight:700; line-height:1.5; position:relative; z-index:1;">
       「作って終わり」から<br>
-      <span style="background:linear-gradient(135deg,var(--accent),var(--gold)); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">「最速で改善し、確実に成果」</span>
-      へ。
+      <span style="background:linear-gradient(135deg,var(--accent),var(--gold)); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">「最速で改善し、確実に成果」へ。</span>
     </p>
-    <p style="font-size:clamp(0.9rem,1.5vw,1.15rem); color:var(--muted); margin-top:1.2rem; letter-spacing:0.05em; position:relative; z-index:1;">CVの定義 〜 導線設計 〜 計測 〜 ABテストを一気通貫で設計</p>
+    <p style="font-size:clamp(0.9rem,1.5vw,1.15rem); color:var(--muted); margin-top:1.2rem; letter-spacing:0.05em; position:relative; z-index:1;">CVの定義 〜 導線設計 〜 計測<br class="sp-br">〜 ABテストを一気通貫で設計</p>
   </div>
 </section>
 
