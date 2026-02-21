@@ -103,6 +103,32 @@
       font-weight: 500 !important;
     }
 
+    /* ── HAMBURGER ── */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+      z-index: 110;
+    }
+
+    .nav-hamburger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
     /* ── HERO ── */
     #hero {
       min-height: 100vh;
@@ -391,15 +417,6 @@
       border-radius: 50%;
     }
 
-    .kanji-large {
-      font-family: 'Noto Serif JP', serif;
-      font-size: 5rem;
-      font-weight: 700;
-      color: rgba(200,169,110,0.15);
-      line-height: 1;
-      margin-bottom: 1rem;
-    }
-
     .about-card-text {
       font-size: 0.9rem;
       color: var(--muted);
@@ -581,17 +598,6 @@
     .dot-red { background: #e74c3c; }
     .dot-blue { background: var(--accent); }
 
-    /* Arrow between cards */
-    .market-arrow {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
-      color: var(--gold);
-      padding: 1rem;
-      align-self: center;
-    }
-
     /* ── SERVICES ── */
     #services {
       background: var(--dark);
@@ -692,17 +698,6 @@
       color: var(--accent);
       flex-shrink: 0;
       margin-top: 0.05rem;
-    }
-
-    .plan-lv {
-      margin-top: 1.5rem;
-      padding: 0.6rem 1rem;
-      background: rgba(79,156,249,0.06);
-      border: 1px solid var(--border);
-      border-radius: 0.6rem;
-      font-size: 0.75rem;
-      color: var(--accent);
-      text-align: center;
     }
 
     /* Deliverables timeline */
@@ -905,13 +900,6 @@
       border-radius: 50%;
     }
 
-    .contact-kanji {
-      font-family: 'Noto Serif JP', serif;
-      font-size: 4rem;
-      color: rgba(200,169,110,0.12);
-      margin-bottom: 1rem;
-    }
-
     .contact-box h2 {
       font-family: 'Noto Serif JP', serif;
       font-size: 1.8rem;
@@ -965,23 +953,223 @@
 
     /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
-      .about-grid,
-      .market-grid,
-      .plans-grid,
-      .lv-grid {
-        grid-template-columns: 1fr;
+
+      /* --- Nav --- */
+      .nav-hamburger { display: flex; }
+
+      nav ul {
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 65px;
+        left: 0;
+        right: 0;
+        background: rgba(10,12,20,0.97);
+        backdrop-filter: blur(16px);
+        padding: 1rem 2rem 1.5rem;
+        gap: 0;
+        border-bottom: 1px solid var(--border);
+        transform: translateY(-120%);
+        opacity: 0;
+        pointer-events: none;
+        transition: transform 0.35s ease, opacity 0.35s ease;
+        z-index: 99;
+      }
+
+      nav ul.open {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      nav ul li {
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+      }
+
+      nav ul li:last-child { border-bottom: none; }
+
+      nav a {
+        display: block;
+        padding: 0.85rem 0;
+        font-size: 0.9rem;
+      }
+
+      .nav-cta {
+        display: block;
+        text-align: center;
+        margin-top: 0.6rem;
+        padding: 0.7rem 1rem !important;
+        border-radius: 2rem;
+      }
+
+      /* --- Section padding --- */
+      section { padding: 4rem 5%; }
+
+      /* --- Hero --- */
+      #hero {
+        padding: 7rem 5% 3.5rem;
+        align-items: flex-start;
+      }
+
+      #hero::after { display: none; }
+      .hero-kanji-sail { display: none; }
+
+      .hero-mission {
+        font-size: clamp(1.7rem, 7.5vw, 2.5rem);
+        line-height: 1.55;
+      }
+
+      .hero-sub {
+        font-size: 0.95rem;
+        line-height: 1.9;
+      }
+
+      .hero-btns {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .hero-btns a {
+        text-align: center;
       }
 
       .hero-stats {
+        flex-direction: column;
+        gap: 0.8rem;
+        margin-top: 2.5rem;
+      }
+
+      .stat-item {
+        flex: none;
+        width: 100%;
+      }
+
+      /* --- About --- */
+      .about-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      /* --- Strengths --- */
+      #strengths::before { display: none; }
+
+      .strengths-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      /* --- Market --- */
+      .market-grid {
+        grid-template-columns: 1fr;
         gap: 1.5rem;
       }
 
-      nav ul { display: none; }
+      .market-card { padding: 1.8rem; }
 
+      /* --- Services --- */
+      #services::before { display: none; }
+
+      .plans-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      /* --- Timeline: vertical --- */
+      .timeline {
+        flex-direction: column;
+        gap: 1.2rem;
+      }
+
+      .timeline::before { display: none; }
+
+      .timeline-item {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        padding-top: 0;
+        text-align: left;
+        background: var(--dark3);
+        border: 1px solid var(--border);
+        border-radius: 1rem;
+        padding: 1rem 1.5rem;
+      }
+
+      .timeline-dot { display: none; }
+
+      .timeline-num {
+        font-size: 1.6rem;
+        flex-shrink: 0;
+      }
+
+      .timeline-label {
+        margin-top: 0;
+        line-height: 1.5;
+      }
+
+      /* --- Flow steps --- */
+      .flow-steps {
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+      }
+
+      .flow-steps::before { display: none; }
+
+      .flow-step { padding: 0; }
+
+      /* --- Pricing --- */
+      .lv-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      /* --- Contact --- */
+      .contact-box {
+        padding: 2rem 1.5rem;
+        border-radius: 1.5rem;
+      }
+
+      .contact-box h2 { font-size: 1.5rem; }
+
+      /* --- Footer --- */
       footer {
         flex-direction: column;
         gap: 1rem;
         text-align: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .flow-steps {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .flow-step {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        text-align: left;
+        background: var(--dark3);
+        border: 1px solid var(--border);
+        border-radius: 1rem;
+        padding: 0.9rem 1.2rem;
+      }
+
+      .step-num {
+        margin: 0;
+        flex-shrink: 0;
+        width: 48px;
+        height: 48px;
+        font-size: 0.75rem;
+      }
+
+      .step-desc { margin-top: 0.2rem; }
+
+      .contact-box { padding: 1.5rem 1rem; }
+
+      .hero-tag {
+        font-size: 0.68rem;
+        letter-spacing: 0.08em;
       }
     }
 
@@ -999,7 +1187,7 @@
     Hotokaze
     <span>LPGROWTH × TECHNOLOGY</span>
   </div>
-  <ul>
+  <ul id="navMenu">
     <li><a href="#about">ミッション</a></li>
     <li><a href="#strengths">強み</a></li>
     <li><a href="#market">市場課題</a></li>
@@ -1007,6 +1195,11 @@
     <li><a href="#pricing">プラン</a></li>
     <li><a href="#contact" class="nav-cta">無料相談</a></li>
   </ul>
+  <button class="nav-hamburger" id="navHamburger" aria-label="メニューを開く">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
 </nav>
 
 <!-- HERO -->
@@ -1027,7 +1220,7 @@
     </p>
 
     <div class="hero-btns">
-      <a href="#contact" class="btn-primary">無料相談を申し込む</a>
+      <a href="#contact" class="btn-primary">今すぐ１分で見積もり</a>
       <a href="#services" class="btn-outline">サービスを見る</a>
     </div>
 
@@ -1077,7 +1270,6 @@
 
     <div class="about-visual">
       <div class="about-card">
-        <div class="kanji-large">帆</div>
         <p class="about-card-text">
           <strong>【将来の展望】</strong><br><br>
           本事業（LP/HPグロース）を入り口として顧客のビジネスに深く伴走し、ゆくゆくは<strong>システム開発、アプリ開発、AI開発</strong>など、顧客のビジネスを総合的に飛躍させるテクノロジーパートナーへの展開を見据えます。
@@ -1343,19 +1535,14 @@
   <div class="contact-inner">
     <div class="section-label" style="text-align:center;">Contact</div>
     <div class="contact-box fade-in">
-      <div class="contact-kanji">航</div>
       <h2>一緒に、新しい海へ</h2>
       <p>
-        まずは60分の無料相談から。<br>
         あなたの熱量と事業を理解した上で、<br>
         最適な3ヶ月のロードマップをご提案します。
       </p>
       <a href="mailto:contact@hotokaze.co.jp" class="btn-primary" style="display:inline-block;">
-        無料相談を申し込む →
+        今すぐ１分で見積もり
       </a>
-      <p style="margin-top:1.5rem; font-size:0.78rem; color:var(--muted);">
-        事前にご準備いただくもの：現状LP/HP URL（なければ競合URL3つ）・<br>商品/サービス資料（あれば）・目標（ざっくりでOK）
-      </p>
     </div>
   </div>
 </section>
@@ -1367,6 +1554,23 @@
 </footer>
 
 <script>
+  // Hamburger menu
+  const hamburger = document.getElementById('navHamburger');
+  const navMenu = document.getElementById('navMenu');
+
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    navMenu.classList.toggle('open');
+  });
+
+  // Close menu on link click
+  navMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      hamburger.classList.remove('open');
+      navMenu.classList.remove('open');
+    });
+  });
+
   // Scroll animations
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -1374,7 +1578,7 @@
         entry.target.classList.add('visible');
       }
     });
-  }, { threshold: 0.15 });
+  }, { threshold: 0.1 });
 
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
