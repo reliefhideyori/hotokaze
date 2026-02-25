@@ -9,21 +9,38 @@ const getResend = () => new Resend(process.env.RESEND_API_KEY!);
 // 自社単価テーブル
 // ============================================================
 const UNIT_PRICE_TABLE = `
-- エンジニア単価: 8,000円/時間
 - デザイナー単価: 6,000円/時間
+- コーダー（エンジニア）単価: 8,000円/時間
+- ディレクション単価: 5,000円/時間
 
-機能別目安工数:
-- 会員登録・ログイン: 20〜40h
-- 管理画面: 30〜80h
-- 決済機能: 20〜40h
-- 検索・フィルター: 15〜30h
-- 通知機能: 10〜20h
-- チャット: 30〜60h
-- ファイルアップロード: 10〜20h
-- 外部API連携: 15〜40h
+ページ種別・規模別 目安工数:
+- LP（1枚もの）: デザイン 15〜30h / コーディング 10〜20h
+- コーポレートサイト（3〜5ページ）: デザイン 30〜60h / コーディング 20〜40h
+- コーポレートサイト（6ページ以上）: デザイン 50〜100h / コーディング 40〜80h
+
+機能別 目安工数:
+- 問い合わせフォーム: 5〜10h
+- LINE連携: 3〜8h
+- ブログ・お知らせ更新: 15〜30h
+- 予約機能: 20〜40h
+- 採用応募フォーム: 8〜15h
 - 多言語対応: 20〜40h
-- レポート・集計: 20〜50h
+- SEO対策: 10〜20h
+- 写真撮影ディレクション: 10〜20h
+- 保守・運用（月額）: 月2〜5h
 `;
+
+// ============================================================
+// 連絡先情報の型
+// ============================================================
+interface ContactInfo {
+  name: string;
+  company?: string;
+  email: string;
+  phone?: string;
+  lineId?: string;
+  preferredDate?: string;
+}
 
 // ============================================================
 // Geminiへのプロンプト（JSON出力指定）
@@ -37,28 +54,28 @@ function buildPrompt(data: {
     .join("\n");
 
   return `
-あなたはシステム開発会社の見積もり担当者です。
+あなたはWeb制作会社の見積もり担当者です。
 以下のヒアリング結果と単価テーブルをもとに見積もりを作成し、必ずJSONのみを返してください（説明文・マークダウン不要）。
 
 【単価テーブル】
 ${UNIT_PRICE_TABLE}
 
 【依頼内容】
-システム種別: ${data.systemType}
+制作種別: ${data.systemType}
 
 【ヒアリング結果】
 ${qaText}
 
 【出力形式】JSONのみ出力すること:
 {
-  "summary": "システムの概要を1〜2文で",
-  "totalMin": "合計金額（下限）例: ¥1,200,000",
-  "totalMax": "合計金額（上限）例: ¥2,400,000",
-  "deliveryPeriod": "納期目安 例: 8〜12週間",
+  "summary": "制作内容の概要を1〜2文で",
+  "totalMin": "合計金額（下限）例: ¥120,000",
+  "totalMax": "合計金額（上限）例: ¥350,000",
+  "deliveryPeriod": "納期目安 例: 3〜6週間",
   "breakdown": [
-    { "feature": "機能名", "hours": "工数 例: 40〜60h", "cost": "費用 例: ¥320,000〜¥480,000" }
+    { "feature": "項目名", "hours": "工数 例: 20〜30h", "cost": "費用 例: ¥120,000〜¥180,000" }
   ],
-  "totalHours": "合計工数 例: 150〜220h",
+  "totalHours": "合計工数 例: 50〜80h",
   "notes": [
     "備考・前提条件を3〜5点（文字列の配列）"
   ]
@@ -82,7 +99,8 @@ interface EstimateData {
 function buildEmailHtml(
   systemType: string,
   qa: { question: string; answer: string }[],
-  est: EstimateData
+  est: EstimateData,
+  contact: ContactInfo
 ): string {
   const breakdownRows = est.breakdown
     .map(
@@ -112,6 +130,23 @@ function buildEmailHtml(
         `<li style="font-size:12px;color:#6b7280;line-height:1.8;margin-bottom:4px;">${note}</li>`
     )
     .join("");
+
+  // 連絡先行を構築
+  const contactRows: string[] = [];
+  contactRows.push(`<tr><td style="padding:8px 16px;font-size:12px;color:#6b7280;border-bottom:1px solid #f3f4f6;width:35%;">お名前</td><td style="padding:8px 16px;font-size:12px;color:#111827;border-bottom:1px solid #f3f4f6;font-weight:500;">${contact.name}</td></tr>`);
+  if (contact.company) {
+    contactRows.push(`<tr><td style="padding:8px 16px;font-size:12px;color:#6b7280;border-bottom:1px solid #f3f4f6;">会社名 / 屋号</td><td style="padding:8px 16px;font-size:12px;color:#111827;border-bottom:1px solid #f3f4f6;font-weight:500;">${contact.company}</td></tr>`);
+  }
+  contactRows.push(`<tr><td style="padding:8px 16px;font-size:12px;color:#6b7280;border-bottom:1px solid #f3f4f6;">メールアドレス</td><td style="padding:8px 16px;font-size:12px;color:#111827;border-bottom:1px solid #f3f4f6;font-weight:500;">${contact.email}</td></tr>`);
+  if (contact.phone) {
+    contactRows.push(`<tr><td style="padding:8px 16px;font-size:12px;color:#6b7280;border-bottom:1px solid #f3f4f6;">電話番号</td><td style="padding:8px 16px;font-size:12px;color:#111827;border-bottom:1px solid #f3f4f6;font-weight:500;">${contact.phone}</td></tr>`);
+  }
+  if (contact.lineId) {
+    contactRows.push(`<tr><td style="padding:8px 16px;font-size:12px;color:#6b7280;border-bottom:1px solid #f3f4f6;">LINE</td><td style="padding:8px 16px;font-size:12px;color:#111827;border-bottom:1px solid #f3f4f6;font-weight:500;">${contact.lineId}</td></tr>`);
+  }
+  if (contact.preferredDate) {
+    contactRows.push(`<tr><td style="padding:8px 16px;font-size:12px;color:#6b7280;border-bottom:1px solid #f3f4f6;">相談希望日時</td><td style="padding:8px 16px;font-size:12px;color:#111827;border-bottom:1px solid #f3f4f6;font-weight:500;">${contact.preferredDate}</td></tr>`);
+  }
 
   return `
 <!DOCTYPE html>
@@ -151,6 +186,7 @@ function buildEmailHtml(
 
           <!-- 挨拶 -->
           <p style="margin:0 0 28px;font-size:14px;color:#374151;line-height:1.8;">
+            ${contact.name} 様<br><br>
             この度はお問い合わせいただきありがとうございます。<br>
             ヒアリング内容をもとに、AIが概算見積もりを作成しました。
           </p>
@@ -168,6 +204,12 @@ function buildEmailHtml(
             </tr>
           </table>
 
+          <!-- お客様情報 -->
+          <p style="margin:0 0 12px;font-size:11px;font-weight:700;color:#008080;letter-spacing:0.08em;text-transform:uppercase;">お客様情報</p>
+          <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #f3f4f6;border-radius:10px;overflow:hidden;margin-bottom:28px;">
+            ${contactRows.join("")}
+          </table>
+
           <!-- ヒアリング内容 -->
           <p style="margin:0 0 12px;font-size:11px;font-weight:700;color:#008080;letter-spacing:0.08em;text-transform:uppercase;">ヒアリング内容</p>
           <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #f3f4f6;border-radius:10px;overflow:hidden;margin-bottom:28px;">
@@ -175,10 +217,10 @@ function buildEmailHtml(
           </table>
 
           <!-- 機能別内訳 -->
-          <p style="margin:0 0 12px;font-size:11px;font-weight:700;color:#008080;letter-spacing:0.08em;text-transform:uppercase;">機能別見積もり内訳</p>
+          <p style="margin:0 0 12px;font-size:11px;font-weight:700;color:#008080;letter-spacing:0.08em;text-transform:uppercase;">見積もり内訳</p>
           <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #f3f4f6;border-radius:10px;overflow:hidden;margin-bottom:16px;">
             <tr style="background:#008080;">
-              <th style="padding:10px 16px;font-size:11px;color:#ffffff;text-align:left;font-weight:600;">機能</th>
+              <th style="padding:10px 16px;font-size:11px;color:#ffffff;text-align:left;font-weight:600;">項目</th>
               <th style="padding:10px 16px;font-size:11px;color:#ffffff;text-align:center;font-weight:600;">工数</th>
               <th style="padding:10px 16px;font-size:11px;color:#ffffff;text-align:right;font-weight:600;">費用（概算）</th>
             </tr>
@@ -230,7 +272,7 @@ function buildEmailHtml(
         <td style="background:#f9fafb;border-radius:0 0 16px 16px;padding:20px 36px;border-top:1px solid #e5e7eb;">
           <p style="margin:0;font-size:11px;color:#9ca3af;line-height:1.8;text-align:center;">
             ※ 本見積もりはAIによる参考値であり、正式な見積書ではありません。<br>
-            ※ 実際の開発費用は要件の詳細・技術選定・チーム構成によって変動します。
+            ※ 実際の制作費用は要件の詳細・デザイン・コンテンツ量によって変動します。
           </p>
         </td>
       </tr>
@@ -252,13 +294,13 @@ export const maxDuration = 30; // Vercel タイムアウトを30秒に延長
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { systemType, qa, email } = body as {
+    const { systemType, qa, contact } = body as {
       systemType: string;
       qa: { question: string; answer: string }[];
-      email: string;
+      contact: ContactInfo;
     };
 
-    if (!systemType || !email) {
+    if (!systemType || !contact?.email || !contact?.name) {
       return NextResponse.json({ error: "必須項目が不足しています。" }, { status: 400 });
     }
 
@@ -297,9 +339,9 @@ export async function POST(req: NextRequest) {
     console.log("[4] Resend メール送信開始");
     const sendOptions: Parameters<ReturnType<typeof getResend>["emails"]["send"]>[0] = {
       from: process.env.FROM_EMAIL!,
-      to: email,
+      to: contact.email,
       subject: `【AI見積もり】${systemType}の概算見積もりが届きました`,
-      html: buildEmailHtml(systemType, qa ?? [], est),
+      html: buildEmailHtml(systemType, qa ?? [], est, contact),
     };
     if (process.env.TO_EMAIL) sendOptions.cc = process.env.TO_EMAIL;
 

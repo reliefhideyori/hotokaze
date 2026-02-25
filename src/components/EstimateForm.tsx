@@ -7,122 +7,316 @@ const TEAL = "#008080";
 const TEAL_BG = "#00808014";
 const TEAL_BORDER = "#00808077";
 
-type Phase = "systemType" | "questions" | "email";
+type Phase = "systemType" | "questions" | "contact";
 type ModalType = "terms" | "privacy" | null;
 
 interface Question {
   question: string;
-  type: "select" | "text";
+  type: "select" | "multiSelect" | "text";
   options?: string[];
+  required?: boolean;
+  subtitle?: string;
+}
+
+interface ContactInfo {
+  name: string;
+  company: string;
+  email: string;
+  phone: string;
+  lineId: string;
+  preferredDate: string;
 }
 
 // ============================================================
-// 定型質問セット
+// 3ルート分岐: Q1 選択肢
+// ============================================================
+const SYSTEM_TYPES = [
+  { label: "ホームページ", icon: "🌐", desc: "会社・お店の紹介サイトを作りたい" },
+  { label: "LP（広告用の1枚ページ）", icon: "📣", desc: "広告・集客用のランディングページを作りたい" },
+  { label: "未定 / 相談したい", icon: "💬", desc: "何が必要かわからない・まず相談したい" },
+];
+
+// ============================================================
+// ルート別 質問セット (Q2〜Q8)
 // ============================================================
 const QUESTION_SETS: Record<string, Question[]> = {
   "ホームページ": [
+    // Q2 目的
     {
-      question: "サイトの用途を教えてください",
-      type: "select",
+      question: "今回の目的を教えてください",
+      type: "multiSelect",
+      subtitle: "複数選択可",
       options: [
-        "会社・コーポレートサイト",
-        "事業・サービス紹介サイト",
-        "ブランドサイト・採用サイト",
-        "その他",
+        "会社・お店の信頼性を上げたい",
+        "問い合わせを増やしたい",
+        "採用を強化したい",
+        "商品・サービスをわかりやすく伝えたい",
+        "とりあえず早く公開したい",
+        "まだ整理できていない / 相談したい",
       ],
     },
+    // Q3 現在の状況
     {
-      question: "希望するページ数はどのくらいですか？",
-      type: "select",
-      options: ["5ページ以内（シンプル）", "5〜10ページ", "10〜20ページ", "20ページ以上"],
-    },
-    {
-      question: "デザインのテイストを教えてください",
-      type: "select",
-      options: ["シンプル・ミニマル", "高級感・プレミアム", "ポップ・カジュアル", "コーポレート・信頼感"],
-    },
-    {
-      question: "必要な機能を教えてください",
-      type: "select",
+      question: "現在の状況を教えてください",
+      type: "multiSelect",
+      subtitle: "複数選択可",
       options: [
-        "お問い合わせフォームのみ",
-        "お問い合わせ＋ブログ・更新機能",
-        "多言語対応も必要",
-        "採用・その他機能も含む",
+        "なし（独自ドメイン未取得）",
+        "SNS（Instagram / LINE など）",
+        "古い/簡易的なホームページ（作り直したい）",
+        "メールアドレス",
+        "わからない / 相談したい",
       ],
     },
+    // Q4 希望時期
     {
-      question: "CMS（更新管理システム）は必要ですか？",
+      question: "希望する時期を教えてください",
       type: "select",
-      options: ["不要（静的サイトでOK）", "WordPressなどのCMSを使いたい", "独自のCMSが必要", "まだ未定"],
+      options: [
+        "できるだけ早く（2週間以内）",
+        "1か月以内",
+        "2〜3か月以内",
+        "時期は未定（まず相談したい）",
+      ],
     },
+    // Q5 想定規模
     {
-      question: "希望する納期はいつ頃ですか？",
+      question: "想定するページ規模を教えてください",
       type: "select",
-      options: ["1ヶ月以内", "1〜2ヶ月", "2〜3ヶ月", "未定"],
+      options: [
+        "1ページで十分（シンプル）",
+        "3〜5ページくらい（標準）",
+        "6ページ以上（しっかり作りたい）",
+        "わからない / 提案してほしい",
+      ],
     },
+    // Q6 必要な機能
     {
-      question: "ご予算の目安を教えてください",
+      question: "必要な機能はありますか？",
+      type: "multiSelect",
+      subtitle: "複数選択可・任意",
+      options: [
+        "問い合わせフォーム",
+        "LINE連携",
+        "お知らせ更新（ブログ）",
+        "予約機能",
+        "採用応募フォーム",
+        "多言語対応",
+        "写真撮影もお願いしたい",
+        "保守・更新もお願いしたい",
+        "特になし / 相談したい",
+      ],
+    },
+    // Q7 素材の準備状況
+    {
+      question: "手元にある素材を教えてください",
+      type: "multiSelect",
+      subtitle: "複数選択可",
+      options: [
+        "ロゴ",
+        "写真素材",
+        "文章（会社説明・サービス説明）",
+        "サービス資料 / チラシ",
+        "既存サイトの内容を流用したい",
+        "何もない（全部相談したい）",
+        "わからない",
+      ],
+    },
+    // Q8 予算感
+    {
+      question: "予算の目安を教えてください",
       type: "select",
-      options: ["〜30万円", "30〜100万円", "100〜300万円", "300万円以上", "未定"],
-    },
-    {
-      question: "参考にしたいサイトのURLや、その他ご要望があればご記入ください（任意）",
-      type: "text",
+      subtitle: "任意",
+      options: [
+        "〜10万円",
+        "10〜30万円",
+        "30〜50万円",
+        "50万円以上",
+        "まだわからない / 提案を見て決めたい",
+      ],
     },
   ],
-  "LP（ランディングページ）": [
+
+  "LP（広告用の1枚ページ）": [
+    // Q2 目的
     {
-      question: "LPの主な目的を教えてください",
-      type: "select",
+      question: "今回の目的を教えてください",
+      type: "multiSelect",
+      subtitle: "複数選択可",
       options: [
-        "リード獲得（問い合わせ・資料請求）",
-        "商品・サービスの販売",
-        "イベント・セミナーの集客",
-        "アプリ・サービスへの誘導",
+        "広告用に1ページ作りたい",
+        "問い合わせ・予約を増やしたい",
+        "新商品・新サービスを告知したい",
+        "資料請求を増やしたい",
+        "集客をしたい",
+        "まだ整理できていない / 相談したい",
       ],
     },
+    // Q3 現在の状況
     {
-      question: "ターゲットとなる顧客層を教えてください",
-      type: "select",
-      options: ["一般消費者（BtoC）", "法人・企業（BtoB）", "両方", "まだ未定"],
-    },
-    {
-      question: "デザインのテイストを教えてください",
-      type: "select",
-      options: ["クリーン・シンプル", "高級感・プレミアム", "インパクト重視・ダイナミック", "親しみやすい・カジュアル"],
-    },
-    {
-      question: "コンバージョンポイント（ゴール）を教えてください",
-      type: "select",
+      question: "現在の状況を教えてください",
+      type: "multiSelect",
+      subtitle: "複数選択可",
       options: [
-        "お問い合わせフォーム送信",
-        "資料ダウンロード",
-        "商品購入・申し込み",
-        "電話・LINE誘導",
+        "初めて作る",
+        "すでにLPがある（改善したい）",
+        "広告は回している",
+        "広告はこれから",
+        "わからない / 相談したい",
       ],
     },
+    // Q4 希望時期
     {
-      question: "希望する納期はいつ頃ですか？",
+      question: "希望する時期を教えてください",
       type: "select",
-      options: ["2週間以内", "1ヶ月以内", "1〜2ヶ月", "未定"],
+      options: [
+        "できるだけ早く（2週間以内）",
+        "1か月以内",
+        "2〜3か月以内",
+        "時期は未定（まず相談したい）",
+      ],
     },
+    // Q5 CV種別
     {
-      question: "ご予算の目安を教えてください",
+      question: "達成したい成果（CV）を教えてください",
       type: "select",
-      options: ["〜15万円", "15〜30万円", "30〜100万円", "100万円以上", "未定"],
+      options: [
+        "問い合わせ獲得",
+        "予約獲得",
+        "LINE登録",
+        "資料請求",
+        "商品購入（決済）",
+        "応募（採用）",
+        "その他 / 相談したい",
+      ],
     },
+    // Q6 集客方法
     {
-      question: "訴求したい商品・サービスの詳細や参考LPのURLがあればご記入ください（任意）",
-      type: "text",
+      question: "想定する集客方法を教えてください",
+      type: "multiSelect",
+      subtitle: "複数選択可",
+      options: [
+        "Instagram",
+        "Google広告",
+        "Meta広告（Instagram / Facebook）",
+        "LINE",
+        "チラシ / QRコード",
+        "既存顧客への案内",
+        "SEO（検索流入）",
+        "未定 / 相談したい",
+      ],
+    },
+    // Q7 素材の準備状況
+    {
+      question: "手元にある素材を教えてください",
+      type: "multiSelect",
+      subtitle: "複数選択可",
+      options: [
+        "商品 / サービス内容は整理できている",
+        "写真素材がある",
+        "動画素材がある",
+        "お客様の声（レビュー）がある",
+        "実績データがある",
+        "原稿（文章）がある",
+        "何もない（壁打ちから相談したい）",
+        "わからない",
+      ],
+    },
+    // Q8 予算感
+    {
+      question: "予算の目安を教えてください",
+      type: "select",
+      subtitle: "任意",
+      options: [
+        "〜10万円",
+        "10〜30万円",
+        "30〜50万円",
+        "50万円以上",
+        "まだわからない / 提案を見て決めたい",
+      ],
+    },
+  ],
+
+  "未定 / 相談したい": [
+    // Q2 目的（簡易）
+    {
+      question: "今回の目的に近いものはどれですか？",
+      type: "multiSelect",
+      subtitle: "複数選択可",
+      options: [
+        "まずは名刺代わりのページがほしい",
+        "集客や広告用のページがほしい",
+        "まだ何が必要かわからない",
+      ],
+    },
+    // Q3 現在の状況（簡易）
+    {
+      question: "現在の状況を教えてください",
+      type: "multiSelect",
+      subtitle: "複数選択可",
+      options: [
+        "まだ何もない",
+        "SNSはある",
+        "既存ページはあるが弱いと感じる",
+        "わからない",
+      ],
+    },
+    // Q4 希望時期
+    {
+      question: "希望する時期を教えてください",
+      type: "select",
+      options: [
+        "できるだけ早く（2週間以内）",
+        "1か月以内",
+        "2〜3か月以内",
+        "時期は未定（まず相談したい）",
+      ],
+    },
+    // Q5 手元の素材
+    {
+      question: "手元にある素材・情報を教えてください",
+      type: "multiSelect",
+      subtitle: "複数選択可",
+      options: [
+        "ロゴ",
+        "写真素材",
+        "商品 / サービスの説明文",
+        "チラシ・資料",
+        "何もない（整理から相談したい）",
+        "わからない",
+      ],
+    },
+    // Q6 優先したいこと
+    {
+      question: "優先したいことはありますか？",
+      type: "select",
+      subtitle: "推奨",
+      options: [
+        "会社・お店の信頼性を上げたい",
+        "問い合わせを増やしたい",
+        "採用を強化したい",
+        "商品・サービスをわかりやすく伝えたい",
+        "資料請求を増やしたい",
+        "集客をしたい",
+        "とりあえず早く公開したい",
+        "まだ整理できていない / 相談したい",
+      ],
+    },
+    // Q8 予算感
+    {
+      question: "予算の目安を教えてください",
+      type: "select",
+      subtitle: "任意",
+      options: [
+        "〜10万円",
+        "10〜30万円",
+        "30〜50万円",
+        "50万円以上",
+        "まだわからない / 提案を見て決めたい",
+      ],
     },
   ],
 };
-
-const SYSTEM_TYPES = [
-  { label: "ホームページ", icon: "🌐", desc: "会社・サービスのホームページ制作" },
-  { label: "LP（ランディングページ）", icon: "📄", desc: "商品・サービスの集客ランディングページ制作" },
-];
 
 // ============================================================
 // モーダルコンテンツ
@@ -290,7 +484,17 @@ export default function EstimateForm() {
   const [currentQ, setCurrentQ] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
   const [currentAnswer, setCurrentAnswer] = useState("");
-  const [email, setEmail] = useState("");
+  // multiSelect用: 現在選択中の項目
+  const [multiSelected, setMultiSelected] = useState<string[]>([]);
+  // 連絡先情報
+  const [contact, setContact] = useState<ContactInfo>({
+    name: "",
+    company: "",
+    email: "",
+    phone: "",
+    lineId: "",
+    preferredDate: "",
+  });
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -303,6 +507,7 @@ export default function EstimateForm() {
     setAnimKey((k) => k + 1);
   };
 
+  // Q1: ルート選択
   const selectSystemType = (type: string) => {
     setSystemType(type);
     const qs = QUESTION_SETS[type] ?? [];
@@ -310,10 +515,19 @@ export default function EstimateForm() {
     setAnswers(new Array(qs.length).fill(""));
     setCurrentQ(0);
     setCurrentAnswer("");
+    setMultiSelected([]);
     advance("forward");
     setPhase("questions");
   };
 
+  // multiSelectトグル
+  const toggleMultiSelect = (opt: string) => {
+    setMultiSelected((prev) =>
+      prev.includes(opt) ? prev.filter((o) => o !== opt) : [...prev, opt]
+    );
+  };
+
+  // 回答して次へ
   const answerAndAdvance = (answer: string) => {
     const newAnswers = [...answers];
     newAnswers[currentQ] = answer;
@@ -321,37 +535,67 @@ export default function EstimateForm() {
 
     if (currentQ < questions.length - 1) {
       advance("forward");
-      setCurrentQ((q) => q + 1);
+      const nextQ = currentQ + 1;
+      setCurrentQ(nextQ);
       setCurrentAnswer("");
+      // 次の質問がmultiSelectなら既存回答を復元
+      if (questions[nextQ].type === "multiSelect") {
+        const existing = newAnswers[nextQ];
+        setMultiSelected(existing ? existing.split("、") : []);
+      } else {
+        setMultiSelected([]);
+      }
     } else {
       advance("forward");
-      setPhase("email");
+      setPhase("contact");
     }
   };
 
+  // multiSelect確定
+  const confirmMultiSelect = () => {
+    const answer = multiSelected.join("、");
+    answerAndAdvance(answer);
+  };
+
+  // 戻る
   const goPrev = () => {
     if (phase === "questions") {
       if (currentQ > 0) {
         const prevIdx = currentQ - 1;
         advance("backward");
         setCurrentQ(prevIdx);
-        setCurrentAnswer(answers[prevIdx] || "");
+        // 前の質問の回答を復元
+        if (questions[prevIdx].type === "multiSelect") {
+          const existing = answers[prevIdx];
+          setMultiSelected(existing ? existing.split("、") : []);
+        } else {
+          setCurrentAnswer(answers[prevIdx] || "");
+          setMultiSelected([]);
+        }
       } else {
         advance("backward");
         setPhase("systemType");
       }
-    } else if (phase === "email") {
+    } else if (phase === "contact") {
       const lastQ = questions.length - 1;
       advance("backward");
       setCurrentQ(lastQ);
-      setCurrentAnswer(answers[lastQ] || "");
+      if (questions[lastQ].type === "multiSelect") {
+        const existing = answers[lastQ];
+        setMultiSelected(existing ? existing.split("、") : []);
+      } else {
+        setCurrentAnswer(answers[lastQ] || "");
+        setMultiSelected([]);
+      }
       setPhase("questions");
     }
   };
 
+  // 送信
   const submitEstimate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) { setError("メールアドレスを入力してください。"); return; }
+    if (!contact.name.trim()) { setError("お名前を入力してください。"); return; }
+    if (!contact.email.trim()) { setError("メールアドレスを入力してください。"); return; }
     if (!agreedToTerms) { setError("利用規約・プライバシーポリシーへの同意が必要です。"); return; }
     setSubmitting(true);
     setError("");
@@ -364,7 +608,7 @@ export default function EstimateForm() {
       const res = await fetch("/api/estimate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ systemType, qa, email }),
+        body: JSON.stringify({ systemType, qa, contact }),
       });
       if (!res.ok) {
         const data = await res.json();
@@ -379,12 +623,15 @@ export default function EstimateForm() {
   };
 
   // プログレスバー
-  const totalSteps = 1 + questions.length + 1; // systemType + questions + email
+  const totalSteps = 1 + questions.length + 1; // Q1 + questions + contact
   let currentStep = 0;
   if (phase === "systemType") currentStep = 0;
   else if (phase === "questions") currentStep = 1 + currentQ;
-  else if (phase === "email") currentStep = totalSteps;
+  else if (phase === "contact") currentStep = totalSteps;
   const progressPct = totalSteps > 0 ? (currentStep / totalSteps) * 100 : 0;
+
+  // ルート表示名（短縮）
+  const routeLabel = systemType === "未定 / 相談したい" ? "相談" : systemType === "LP（広告用の1枚ページ）" ? "LP" : "HP";
 
   return (
     <>
@@ -404,11 +651,11 @@ export default function EstimateForm() {
           className={`flex-1 flex flex-col ${direction === "forward" ? "step-forward" : "step-backward"}`}
         >
 
-          {/* フェーズ: システム種別選択 */}
+          {/* ======== フェーズ: Q1 ルート選択 ======== */}
           {phase === "systemType" && (
             <div>
               <div className="mb-6">
-                <h2 className="text-base font-bold text-gray-900">どんなシステムを作りたいですか？</h2>
+                <h2 className="text-base font-bold text-gray-900">作りたいものを教えてください</h2>
                 <p className="text-xs text-gray-400 mt-0.5">最も近いものを選択してください</p>
               </div>
               <div className="space-y-3">
@@ -439,20 +686,24 @@ export default function EstimateForm() {
             </div>
           )}
 
-          {/* フェーズ: 質問 */}
+          {/* ======== フェーズ: 質問 ======== */}
           {phase === "questions" && questions.length > 0 && (
             <div className="flex flex-col flex-1">
               <div className="mb-1 flex items-center justify-between">
                 <p className="text-xs text-gray-400">質問 {currentQ + 1} / {questions.length}</p>
-                <p className="text-xs font-medium" style={{ color: TEAL }}>{systemType}</p>
+                <p className="text-xs font-medium" style={{ color: TEAL }}>{routeLabel}</p>
               </div>
               <div className="mb-5">
                 <h2 className="text-base font-bold text-gray-900 leading-snug">
                   {questions[currentQ].question}
                 </h2>
+                {questions[currentQ].subtitle && (
+                  <p className="text-xs text-gray-400 mt-0.5">{questions[currentQ].subtitle}</p>
+                )}
               </div>
 
-              {questions[currentQ].type === "select" ? (
+              {/* 単一選択 */}
+              {questions[currentQ].type === "select" && (
                 <div className="space-y-2 flex-1">
                   {questions[currentQ].options!.map((opt) => (
                     <button
@@ -479,7 +730,58 @@ export default function EstimateForm() {
                     </button>
                   ))}
                 </div>
-              ) : (
+              )}
+
+              {/* 複数選択 */}
+              {questions[currentQ].type === "multiSelect" && (
+                <div className="flex flex-col flex-1">
+                  <div className="space-y-2 flex-1">
+                    {questions[currentQ].options!.map((opt) => {
+                      const selected = multiSelected.includes(opt);
+                      return (
+                        <button
+                          key={opt}
+                          type="button"
+                          onClick={() => toggleMultiSelect(opt)}
+                          className="flex items-center gap-3 w-full px-4 py-3.5 rounded-2xl border-2 text-left text-sm font-medium text-gray-700 transition-all duration-200"
+                          style={{
+                            borderColor: selected ? TEAL_BORDER : "#e2e8f0",
+                            backgroundColor: selected ? TEAL_BG : "#f8fafc",
+                          }}
+                        >
+                          {/* チェックボックス */}
+                          <div
+                            className="w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all duration-200"
+                            style={{
+                              borderColor: selected ? TEAL : "#d1d5db",
+                              backgroundColor: selected ? TEAL : "white",
+                            }}
+                          >
+                            {selected && (
+                              <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                              </svg>
+                            )}
+                          </div>
+                          <span>{opt}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={confirmMultiSelect}
+                    disabled={multiSelected.length === 0}
+                    className="mt-4 w-full font-semibold py-3.5 rounded-full text-sm text-white transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                    style={{ backgroundColor: TEAL, boxShadow: multiSelected.length > 0 ? `0 4px 14px ${TEAL}44` : "none" }}
+                  >
+                    {currentQ < questions.length - 1 ? "次の質問へ" : "入力完了"}
+                  </button>
+                </div>
+              )}
+
+              {/* テキスト入力 */}
+              {questions[currentQ].type === "text" && (
                 <div className="flex flex-col flex-1">
                   <textarea
                     value={currentAnswer}
@@ -496,7 +798,7 @@ export default function EstimateForm() {
                     className="mt-4 w-full font-semibold py-3.5 rounded-full text-sm text-white transition-all duration-200"
                     style={{ backgroundColor: TEAL, boxShadow: `0 4px 14px ${TEAL}44` }}
                   >
-                    {currentQ < questions.length - 1 ? "次の質問へ →" : "入力完了 →"}
+                    {currentQ < questions.length - 1 ? "次の質問へ" : "入力完了"}
                   </button>
                 </div>
               )}
@@ -511,11 +813,11 @@ export default function EstimateForm() {
             </div>
           )}
 
-          {/* フェーズ: メール */}
-          {phase === "email" && (
+          {/* ======== フェーズ: 連絡先 ======== */}
+          {phase === "contact" && (
             <form onSubmit={submitEstimate} className="flex flex-col flex-1">
               <div className="mb-5">
-                <h2 className="text-base font-bold text-gray-900">見積もり送付先を教えてください</h2>
+                <h2 className="text-base font-bold text-gray-900">連絡先を教えてください</h2>
                 <p className="text-xs text-gray-400 mt-0.5">AIが作成した見積もりをメールでお届けします</p>
               </div>
 
@@ -533,30 +835,116 @@ export default function EstimateForm() {
                   {questions.slice(0, 3).map((q, i) => (
                     <div key={i} className="flex gap-2">
                       <span className="text-gray-400 w-20 shrink-0 leading-tight">{q.question.slice(0, 8)}…</span>
-                      <span className="text-gray-700">{answers[i] || "—"}</span>
+                      <span className="text-gray-700 truncate">{answers[i] || "—"}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-gray-500 mb-2">
-                  メールアドレス <span className="text-red-400">*</span>
-                </label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="example@company.com"
-                  required
-                  className="w-full rounded-2xl px-4 py-3 text-sm text-gray-700 placeholder-gray-300 focus:outline-none bg-gray-50 border-2 border-gray-100 transition-colors"
-                  onFocus={(e) => (e.target.style.borderColor = TEAL_BORDER)}
-                  onBlur={(e) => (e.target.style.borderColor = "#f3f4f6")}
-                />
-                <p className="text-[11px] text-gray-400 mt-1.5 flex items-center gap-1">
-                  <span>🔒</span> 見積もり送付のみに使用します。
-                </p>
+              {/* 連絡先フォーム */}
+              <div className="space-y-3">
+                {/* お名前 */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 mb-1.5">
+                    お名前 <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={contact.name}
+                    onChange={(e) => setContact({ ...contact, name: e.target.value })}
+                    placeholder="山田 太郎"
+                    required
+                    className="w-full rounded-2xl px-4 py-3 text-sm text-gray-700 placeholder-gray-300 focus:outline-none bg-gray-50 border-2 border-gray-100 transition-colors"
+                    onFocus={(e) => (e.target.style.borderColor = TEAL_BORDER)}
+                    onBlur={(e) => (e.target.style.borderColor = "#f3f4f6")}
+                  />
+                </div>
+
+                {/* 会社名 */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 mb-1.5">
+                    会社名 / 屋号
+                  </label>
+                  <input
+                    type="text"
+                    value={contact.company}
+                    onChange={(e) => setContact({ ...contact, company: e.target.value })}
+                    placeholder="株式会社○○（任意）"
+                    className="w-full rounded-2xl px-4 py-3 text-sm text-gray-700 placeholder-gray-300 focus:outline-none bg-gray-50 border-2 border-gray-100 transition-colors"
+                    onFocus={(e) => (e.target.style.borderColor = TEAL_BORDER)}
+                    onBlur={(e) => (e.target.style.borderColor = "#f3f4f6")}
+                  />
+                </div>
+
+                {/* メールアドレス */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 mb-1.5">
+                    メールアドレス <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    value={contact.email}
+                    onChange={(e) => setContact({ ...contact, email: e.target.value })}
+                    placeholder="example@company.com"
+                    required
+                    className="w-full rounded-2xl px-4 py-3 text-sm text-gray-700 placeholder-gray-300 focus:outline-none bg-gray-50 border-2 border-gray-100 transition-colors"
+                    onFocus={(e) => (e.target.style.borderColor = TEAL_BORDER)}
+                    onBlur={(e) => (e.target.style.borderColor = "#f3f4f6")}
+                  />
+                </div>
+
+                {/* 電話番号 */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 mb-1.5">
+                    電話番号
+                  </label>
+                  <input
+                    type="tel"
+                    value={contact.phone}
+                    onChange={(e) => setContact({ ...contact, phone: e.target.value })}
+                    placeholder="090-1234-5678（任意）"
+                    className="w-full rounded-2xl px-4 py-3 text-sm text-gray-700 placeholder-gray-300 focus:outline-none bg-gray-50 border-2 border-gray-100 transition-colors"
+                    onFocus={(e) => (e.target.style.borderColor = TEAL_BORDER)}
+                    onBlur={(e) => (e.target.style.borderColor = "#f3f4f6")}
+                  />
+                </div>
+
+                {/* LINE ID */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 mb-1.5">
+                    LINE ID または LINE連絡方法
+                  </label>
+                  <input
+                    type="text"
+                    value={contact.lineId}
+                    onChange={(e) => setContact({ ...contact, lineId: e.target.value })}
+                    placeholder="@line_id（任意）"
+                    className="w-full rounded-2xl px-4 py-3 text-sm text-gray-700 placeholder-gray-300 focus:outline-none bg-gray-50 border-2 border-gray-100 transition-colors"
+                    onFocus={(e) => (e.target.style.borderColor = TEAL_BORDER)}
+                    onBlur={(e) => (e.target.style.borderColor = "#f3f4f6")}
+                  />
+                </div>
+
+                {/* 相談希望日時 */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 mb-1.5">
+                    相談希望日時
+                  </label>
+                  <input
+                    type="text"
+                    value={contact.preferredDate}
+                    onChange={(e) => setContact({ ...contact, preferredDate: e.target.value })}
+                    placeholder="例: 平日午前中、3/10 14:00〜（任意）"
+                    className="w-full rounded-2xl px-4 py-3 text-sm text-gray-700 placeholder-gray-300 focus:outline-none bg-gray-50 border-2 border-gray-100 transition-colors"
+                    onFocus={(e) => (e.target.style.borderColor = TEAL_BORDER)}
+                    onBlur={(e) => (e.target.style.borderColor = "#f3f4f6")}
+                  />
+                </div>
               </div>
+
+              <p className="text-[11px] text-gray-400 mt-3 flex items-center gap-1">
+                <span>🔒</span> ご連絡は見積もり送付とご相談のみに使用します。
+              </p>
 
               {/* 同意チェックボックス */}
               <label className="flex items-start gap-3 mt-4 cursor-pointer">
