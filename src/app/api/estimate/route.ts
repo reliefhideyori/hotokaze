@@ -314,8 +314,9 @@ export async function POST(req: NextRequest) {
         contents: prompt,
       });
     } catch (e) {
-      console.error("[ERROR] Gemini API:", e);
-      return NextResponse.json({ error: "AI見積もりの生成に失敗しました。時間をおいて再度お試しください。" }, { status: 500 });
+      const errMsg = e instanceof Error ? e.message : String(e);
+      console.error("[ERROR] Gemini API:", errMsg, e);
+      return NextResponse.json({ error: `AI見積もりの生成に失敗しました: ${errMsg}` }, { status: 500 });
     }
     const raw = result.text ?? "";
     console.log("[2] Gemini レスポンス取得完了");
