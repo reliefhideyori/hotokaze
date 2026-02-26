@@ -429,28 +429,6 @@ const LP_HTML = `
       font-weight: 500;
     }
 
-    .vision-list {
-      list-style: none;
-      margin-top: 1.5rem;
-    }
-
-    .vision-list li {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.8rem;
-      padding: 0.8rem 0;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      font-size: 0.88rem;
-      color: var(--muted);
-    }
-
-    .vision-list li::before {
-      content: '▸';
-      color: var(--accent);
-      font-size: 0.75rem;
-      flex-shrink: 0;
-      margin-top: 0.15rem;
-    }
 
     /* ── VISION CARD ── */
     .vision-card {
@@ -624,47 +602,98 @@ const LP_HTML = `
     .market-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 2rem;
+      gap: 2.5rem;
+      align-items: stretch;
+    }
+
+    .market-vs {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1a2235, #0a0c14);
+      border: 2px solid rgba(200,169,110,0.4);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--gold);
+      z-index: 5;
     }
 
     .market-card {
-      background: var(--dark3);
-      border: 1px solid var(--border);
-      border-radius: 1.2rem;
+      border-radius: 1.4rem;
       padding: 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .market-card--problem {
+      background: rgba(192,57,43,0.04);
+      border: 1px solid rgba(192,57,43,0.18);
+    }
+
+    .market-card--problem::before {
+      content: '×';
+      position: absolute;
+      right: -1rem;
+      bottom: -2rem;
+      font-size: 12rem;
+      font-weight: 900;
+      color: rgba(231,76,60,0.04);
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .market-card--solution {
+      background: linear-gradient(160deg, rgba(79,156,249,0.08) 0%, rgba(124,92,191,0.06) 100%);
+      border: 1px solid rgba(79,156,249,0.25);
+      box-shadow: 0 4px 40px rgba(79,156,249,0.08), 0 0 80px rgba(79,156,249,0.04);
+    }
+
+    .market-card--solution::before {
+      content: '✓';
+      position: absolute;
+      right: -0.5rem;
+      bottom: -1.5rem;
+      font-size: 10rem;
+      font-weight: 900;
+      color: rgba(79,156,249,0.05);
+      line-height: 1;
+      pointer-events: none;
     }
 
     .market-card-head {
       display: flex;
       align-items: center;
       gap: 1rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.8rem;
     }
 
     .market-badge {
-      padding: 0.4rem 1.1rem;
+      padding: 0.45rem 1.2rem;
       border-radius: 2rem;
-      font-size: 0.82rem;
-      letter-spacing: 0.1em;
-      font-weight: 600;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      font-weight: 700;
     }
 
     .badge-problem {
       background: rgba(192,57,43,0.15);
-      border: 1px solid rgba(192,57,43,0.3);
+      border: 1px solid rgba(192,57,43,0.35);
       color: #e74c3c;
     }
 
     .badge-solution {
-      background: rgba(79,156,249,0.12);
-      border: 1px solid rgba(79,156,249,0.25);
+      background: rgba(79,156,249,0.15);
+      border: 1px solid rgba(79,156,249,0.35);
       color: var(--accent);
-    }
-
-    .market-card h3 {
-      font-family: 'Noto Serif JP', serif;
-      font-size: 1.05rem;
-      font-weight: 700;
     }
 
     .market-list {
@@ -673,25 +702,32 @@ const LP_HTML = `
 
     .market-list li {
       padding: 1rem 0;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      font-size: 1rem;
-      color: #b8c4d4;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 0.95rem;
       display: flex;
       align-items: flex-start;
-      gap: 0.8rem;
+      gap: 0.9rem;
       line-height: 1.75;
     }
 
-    .market-list li .dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      margin-top: 0.55rem;
-      flex-shrink: 0;
+    .market-list--problem li {
+      color: rgba(200,200,210,0.6);
     }
 
-    .dot-red { background: #e74c3c; }
-    .dot-blue { background: var(--accent); }
+    .market-list--solution li {
+      color: var(--text);
+      font-weight: 400;
+    }
+
+    .market-icon {
+      font-size: 1rem;
+      flex-shrink: 0;
+      margin-top: 0.25rem;
+      line-height: 1.75;
+    }
+
+    .market-icon--x { color: #e74c3c; opacity: 0.7; }
+    .market-icon--check { color: var(--accent); }
 
     /* ── SERVICES ── */
     #services {
@@ -851,54 +887,102 @@ const LP_HTML = `
     /* ── FLOW ── */
     #flow {
       background: var(--dark2);
+      overflow: hidden;
     }
 
-    .flow-cards {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem;
+    .flow-carousel {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      padding: 2rem 0;
     }
 
-    .flow-card {
+    .flow-track {
+      display: flex;
+      gap: 2rem;
+      animation: flowScroll 24s linear infinite;
+      width: max-content;
+    }
+
+    .flow-track:hover {
+      animation-play-state: paused;
+    }
+
+    .flow-item {
+      flex-shrink: 0;
+      width: 220px;
       background: var(--dark3);
       border: 1px solid var(--border);
       border-radius: 1.2rem;
-      padding: 1.8rem;
-      transition: transform 0.3s, border-color 0.3s;
+      padding: 1.8rem 1.5rem;
+      text-align: center;
+      transition: border-color 0.3s, box-shadow 0.3s;
     }
 
-    .flow-card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(79,156,249,0.3);
-    }
-
-    .flow-card-num {
+    .flow-item-num {
       font-family: 'Inter', sans-serif;
-      font-size: 0.68rem;
+      font-size: 0.65rem;
       font-weight: 700;
       letter-spacing: 0.15em;
       color: var(--accent);
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.5rem;
     }
 
-    .flow-card-icon {
-      font-size: 1.8rem;
-      margin-bottom: 0.6rem;
+    .flow-item-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
       line-height: 1;
     }
 
-    .flow-card-title {
+    .flow-item-title {
       font-family: 'Noto Serif JP', serif;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       font-weight: 700;
-      margin-bottom: 0.6rem;
       color: var(--text);
+      margin-bottom: 0.4rem;
     }
 
-    .flow-card-desc {
-      font-size: 0.8rem;
+    .flow-item-desc {
+      font-size: 0.75rem;
       color: var(--muted);
-      line-height: 1.8;
+      line-height: 1.6;
+    }
+
+    .flow-arrow {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      opacity: 0.3;
+      font-size: 1.2rem;
+    }
+
+    /* Keyframes: 6 items + duplicates for seamless loop, each pauses at center 1s */
+    @keyframes flowScroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .flow-carousel::before,
+    .flow-carousel::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 80px;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .flow-carousel::before {
+      left: 0;
+      background: linear-gradient(90deg, var(--dark2) 0%, transparent 100%);
+    }
+
+    .flow-carousel::after {
+      right: 0;
+      background: linear-gradient(270deg, var(--dark2) 0%, transparent 100%);
     }
 
     /* ── PRICING ── */
@@ -1150,10 +1234,18 @@ const LP_HTML = `
       /* --- Market --- */
       .market-grid {
         grid-template-columns: 1fr;
-        gap: 1.5rem;
+        gap: 1.8rem;
       }
 
       .market-card { padding: 1.8rem; }
+
+      .market-vs {
+        position: relative;
+        left: auto;
+        top: auto;
+        transform: none;
+        margin: -0.6rem auto;
+      }
 
       /* --- Services --- */
       #services::before { display: none; }
@@ -1195,11 +1287,9 @@ const LP_HTML = `
         line-height: 1.5;
       }
 
-      /* --- Flow cards --- */
-      .flow-cards {
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-      }
+      /* --- Flow carousel --- */
+      .flow-item { width: 190px; padding: 1.5rem 1.2rem; }
+      .flow-carousel::before, .flow-carousel::after { width: 40px; }
 
       /* --- Pricing --- */
       .lv-grid {
@@ -1224,10 +1314,8 @@ const LP_HTML = `
     }
 
     @media (max-width: 480px) {
-      .flow-cards {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-      }
+      .flow-item { width: 170px; padding: 1.3rem 1rem; }
+      .flow-carousel::before, .flow-carousel::after { width: 24px; }
 
       .contact-box { padding: 1.5rem 1rem; }
 
@@ -1338,12 +1426,6 @@ const LP_HTML = `
         顧客の情熱やアイデアを「帆」とし、私たちが提供するAIや最新技術を「風」に見立て、ビジネスの大きな変化の波にワクワクしながら共に乗っていく。
       </p>
 
-      <ul class="vision-list">
-        <li>「作って終わり」ではなく、結果にコミットする伴走型制作</li>
-        <li>AIの活用で制作スピードを最大化し、コストを最小化</li>
-        <li>戦略・検証・改善という真に成果を生むプロセスへ焦点</li>
-        <li>LP/HPグロースを起点に、テクノロジーパートナーへ</li>
-      </ul>
     </div>
 
   </div>
@@ -1355,43 +1437,45 @@ const LP_HTML = `
   <h2 class="section-title">市場課題と<br>解決アプローチ</h2>
   <div class="section-divider"></div>
 
-  <div class="market-grid fade-in">
-    <div class="market-card">
+  <div class="market-grid fade-in" style="position:relative;">
+    <div class="market-card market-card--problem">
       <div class="market-card-head">
         <div class="market-badge badge-problem">従来モデルの課題</div>
       </div>
-      <ul class="market-list">
+      <ul class="market-list market-list--problem">
         <li>
-          <span class="dot dot-red"></span>
+          <span class="market-icon market-icon--x">✕</span>
           高い費用を払っても、完成するのは「LP1枚」など限定的
         </li>
         <li>
-          <span class="dot dot-red"></span>
-          ブラッシュアップの修正にも追加費用がかかり、スピードが出ない
+          <span class="market-icon market-icon--x">✕</span>
+          修正にも追加費用がかかり、スピードが出ない
         </li>
         <li>
-          <span class="dot dot-red"></span>
-          ABテストや改善運用を回す余裕がなく、成果の最大化に至らない
+          <span class="market-icon market-icon--x">✕</span>
+          ABテストや改善運用を回す余裕がなく、成果に至らない
         </li>
       </ul>
     </div>
 
-    <div class="market-card">
+    <div class="market-vs">VS</div>
+
+    <div class="market-card market-card--solution">
       <div class="market-card-head">
-        <div class="market-badge badge-solution">本事業の解決アプローチ</div>
+        <div class="market-badge badge-solution">Hotokaze のアプローチ</div>
       </div>
-      <ul class="market-list">
+      <ul class="market-list market-list--solution">
         <li>
-          <span class="dot dot-blue"></span>
-          AI活用で制作・実装の工数を圧縮し、コストとリードタイムを1/2以下に縮小
+          <span class="market-icon market-icon--check">✓</span>
+          AI活用でコスト・リードタイムを<strong style="color:var(--accent);">1/2以下</strong>に圧縮
         </li>
         <li>
-          <span class="dot dot-blue"></span>
-          浮いたリソースを「戦略と検証」に回し、高速で改善サイクルを実現
+          <span class="market-icon market-icon--check">✓</span>
+          浮いたリソースを戦略と検証に回し<strong style="color:var(--accent);">高速改善</strong>を実現
         </li>
         <li>
-          <span class="dot dot-blue"></span>
-          顧客と同じゴール（CV最大化）にフォーカスし、常に結果を追求
+          <span class="market-icon market-icon--check">✓</span>
+          顧客と同じゴール（CV最大化）にフォーカスし<strong style="color:var(--accent);">結果を追求</strong>
         </li>
       </ul>
     </div>
@@ -1415,42 +1499,93 @@ const LP_HTML = `
   <h2 class="section-title">はじめての打合せ<br><span style="font-size:0.7em; color:var(--muted);">約60分 ／ オンライン対応可</span></h2>
   <div class="section-divider"></div>
 
-  <div class="flow-cards fade-in">
-    <div class="flow-card">
-      <div class="flow-card-num">STEP 01</div>
-      <div class="flow-card-icon">🤝</div>
-      <div class="flow-card-title">ご挨拶・ビジョン共有</div>
-      <p class="flow-card-desc">まず、あなたのやりたいことや目指したい姿を聞かせてください。何が得意で何に悩んでいるか、率直に話せる場にします。</p>
-    </div>
-    <div class="flow-card">
-      <div class="flow-card-num">STEP 02</div>
-      <div class="flow-card-icon">🔍</div>
-      <div class="flow-card-title">現状のヒアリング</div>
-      <p class="flow-card-desc">ターゲット・競合・強みを一緒に整理します。「なんとなく伸びない」の原因を具体化するための対話です。</p>
-    </div>
-    <div class="flow-card">
-      <div class="flow-card-num">STEP 03</div>
-      <div class="flow-card-icon">🎯</div>
-      <div class="flow-card-title">目標の設定</div>
-      <p class="flow-card-desc">何をもって「成果」とするかをはっきり決めます。問い合わせ・購入・LINE登録など、あなたのビジネスに合ったゴールを定義します。</p>
-    </div>
-    <div class="flow-card">
-      <div class="flow-card-num">STEP 04</div>
-      <div class="flow-card-icon">🗺️</div>
-      <div class="flow-card-title">改善ポイントの設計</div>
-      <p class="flow-card-desc">LP・広告・フォームの流れを整理し、「どこで離脱しているか」の仮説を立てます。改善の優先順位も一緒に考えます。</p>
-    </div>
-    <div class="flow-card">
-      <div class="flow-card-num">STEP 05</div>
-      <div class="flow-card-icon">📋</div>
-      <div class="flow-card-title">プランのご提案</div>
-      <p class="flow-card-desc">進め方・費用感・スケジュールをわかりやすくご説明します。「これなら動ける」と感じていただける内容を目指します。</p>
-    </div>
-    <div class="flow-card">
-      <div class="flow-card-num">STEP 06</div>
-      <div class="flow-card-icon">🚀</div>
-      <div class="flow-card-title">スタートの確認</div>
-      <p class="flow-card-desc">開始日・ご契約条件を確定します。疑問点はここで全部解消して、安心してスタートできる状態を作ります。</p>
+  <div class="flow-carousel">
+    <div class="flow-track">
+      <!-- 1st set -->
+      <div class="flow-item">
+        <div class="flow-item-num">STEP 01</div>
+        <div class="flow-item-icon">🤝</div>
+        <div class="flow-item-title">ビジョン共有</div>
+        <p class="flow-item-desc">やりたいことや目指す姿を共有</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-item">
+        <div class="flow-item-num">STEP 02</div>
+        <div class="flow-item-icon">🔍</div>
+        <div class="flow-item-title">現状ヒアリング</div>
+        <p class="flow-item-desc">ターゲット・競合・強みを整理</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-item">
+        <div class="flow-item-num">STEP 03</div>
+        <div class="flow-item-icon">🎯</div>
+        <div class="flow-item-title">目標設定</div>
+        <p class="flow-item-desc">成果の定義とゴールを決定</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-item">
+        <div class="flow-item-num">STEP 04</div>
+        <div class="flow-item-icon">🗺️</div>
+        <div class="flow-item-title">改善設計</div>
+        <p class="flow-item-desc">離脱ポイントを特定し優先順位化</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-item">
+        <div class="flow-item-num">STEP 05</div>
+        <div class="flow-item-icon">📋</div>
+        <div class="flow-item-title">プラン提案</div>
+        <p class="flow-item-desc">進め方・費用・スケジュールを提示</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-item">
+        <div class="flow-item-num">STEP 06</div>
+        <div class="flow-item-icon">🚀</div>
+        <div class="flow-item-title">スタート</div>
+        <p class="flow-item-desc">契約条件を確定し制作開始</p>
+      </div>
+      <div class="flow-arrow" style="margin-right:1rem;">→</div>
+      <!-- 2nd set (duplicate for seamless loop) -->
+      <div class="flow-item">
+        <div class="flow-item-num">STEP 01</div>
+        <div class="flow-item-icon">🤝</div>
+        <div class="flow-item-title">ビジョン共有</div>
+        <p class="flow-item-desc">やりたいことや目指す姿を共有</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-item">
+        <div class="flow-item-num">STEP 02</div>
+        <div class="flow-item-icon">🔍</div>
+        <div class="flow-item-title">現状ヒアリング</div>
+        <p class="flow-item-desc">ターゲット・競合・強みを整理</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-item">
+        <div class="flow-item-num">STEP 03</div>
+        <div class="flow-item-icon">🎯</div>
+        <div class="flow-item-title">目標設定</div>
+        <p class="flow-item-desc">成果の定義とゴールを決定</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-item">
+        <div class="flow-item-num">STEP 04</div>
+        <div class="flow-item-icon">🗺️</div>
+        <div class="flow-item-title">改善設計</div>
+        <p class="flow-item-desc">離脱ポイントを特定し優先順位化</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-item">
+        <div class="flow-item-num">STEP 05</div>
+        <div class="flow-item-icon">📋</div>
+        <div class="flow-item-title">プラン提案</div>
+        <p class="flow-item-desc">進め方・費用・スケジュールを提示</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-item">
+        <div class="flow-item-num">STEP 06</div>
+        <div class="flow-item-icon">🚀</div>
+        <div class="flow-item-title">スタート</div>
+        <p class="flow-item-desc">契約条件を確定し制作開始</p>
+      </div>
     </div>
   </div>
 </section>
