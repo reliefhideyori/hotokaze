@@ -853,58 +853,52 @@ const LP_HTML = `
       background: var(--dark2);
     }
 
-    .flow-steps {
+    .flow-cards {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 0;
-      position: relative;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
     }
 
-    .flow-steps::before {
-      content: '';
-      position: absolute;
-      top: 32px;
-      left: 5%;
-      right: 5%;
-      height: 1px;
-      background: var(--border);
-    }
-
-    .flow-step {
-      text-align: center;
-      padding: 0 1rem 0;
-      position: relative;
-    }
-
-    .step-num {
-      width: 64px;
-      height: 64px;
+    .flow-card {
       background: var(--dark3);
       border: 1px solid var(--border);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 1.2rem;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--accent);
-      position: relative;
-      z-index: 1;
+      border-radius: 1.2rem;
+      padding: 1.8rem;
+      transition: transform 0.3s, border-color 0.3s;
     }
 
-    .step-title {
-      font-size: 0.85rem;
-      font-weight: 500;
-      margin-bottom: 0.4rem;
+    .flow-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(79,156,249,0.3);
+    }
+
+    .flow-card-num {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      margin-bottom: 0.6rem;
+    }
+
+    .flow-card-icon {
+      font-size: 1.8rem;
+      margin-bottom: 0.6rem;
+      line-height: 1;
+    }
+
+    .flow-card-title {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 0.6rem;
       color: var(--text);
     }
 
-    .step-desc {
-      font-size: 0.75rem;
+    .flow-card-desc {
+      font-size: 0.8rem;
       color: var(--muted);
-      line-height: 1.7;
+      line-height: 1.8;
     }
 
     /* ── PRICING ── */
@@ -1201,15 +1195,11 @@ const LP_HTML = `
         line-height: 1.5;
       }
 
-      /* --- Flow steps --- */
-      .flow-steps {
+      /* --- Flow cards --- */
+      .flow-cards {
         grid-template-columns: 1fr 1fr;
-        gap: 1.5rem;
+        gap: 1rem;
       }
-
-      .flow-steps::before { display: none; }
-
-      .flow-step { padding: 0; }
 
       /* --- Pricing --- */
       .lv-grid {
@@ -1234,31 +1224,10 @@ const LP_HTML = `
     }
 
     @media (max-width: 480px) {
-      .flow-steps {
+      .flow-cards {
         grid-template-columns: 1fr;
         gap: 1rem;
       }
-
-      .flow-step {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        text-align: left;
-        background: var(--dark3);
-        border: 1px solid var(--border);
-        border-radius: 1rem;
-        padding: 0.9rem 1.2rem;
-      }
-
-      .step-num {
-        margin: 0;
-        flex-shrink: 0;
-        width: 48px;
-        height: 48px;
-        font-size: 0.75rem;
-      }
-
-      .step-desc { margin-top: 0.2rem; }
 
       .contact-box { padding: 1.5rem 1rem; }
 
@@ -1286,7 +1255,6 @@ const LP_HTML = `
     <li><a href="#about">ミッション</a></li>
     <li><a href="#strengths">強み</a></li>
     <li><a href="#market">市場課題</a></li>
-    <li><a href="#services">サービス</a></li>
     <li><a href="#pricing">プラン</a></li>
     <li><a href="#contact" class="nav-cta">無料相談</a></li>
   </ul>
@@ -1304,8 +1272,8 @@ const LP_HTML = `
     <div class="hero-tag">LPグロース型 HP/LP制作事業</div>
 
     <h1 class="hero-mission">
-      <span class="accent-line" style="display:block;">あなたの熱量を帆に、</span>
-      <span style="display:block; white-space:nowrap; word-break:keep-all;">テクノロジーを風にして、</span>
+      <span style="display:block;">あなたの熱量を<span class="accent-line">帆</span>に、</span>
+      <span style="display:block; white-space:nowrap; word-break:keep-all;">テクノロジーを<span class="accent-line">風</span>にして、</span>
       <span style="display:block;">共に新しい海へ。</span>
     </h1>
 
@@ -1316,51 +1284,7 @@ const LP_HTML = `
 
     <div class="hero-btns">
       <a href="/estimate" class="btn-primary">今すぐ１分で見積もり</a>
-      <a href="#services" class="btn-outline">サービスを見る</a>
-    </div>
-
-    <div class="hero-stats">
-      <div class="stat-item">
-        <div class="stat-icon stat-icon-blue">⚡</div>
-        <div class="stat-body">
-          <div class="stat-num">1/2以下</div>
-          <div class="stat-label">AI活用コスト削減</div>
-          <div class="stat-desc">制作コスト・リードタイムを圧縮</div>
-        </div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-icon stat-icon-gold">🔬</div>
-        <div class="stat-body">
-          <div class="stat-num">月2本</div>
-          <div class="stat-label">LP改善固定</div>
-          <div class="stat-desc">高速ABテストサイクルを継続実施</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ABOUT / MISSION -->
-<section id="about">
-  <div class="section-label">Mission & Vision</div>
-  <h2 class="section-title">私たちの想い・<br>事業コンセプト</h2>
-  <div class="section-divider"></div>
-
-  <div class="about-grid fade-in">
-    <div>
-      <p style="color:var(--muted); font-size:0.95rem; line-height:1.95; margin-bottom:1.5rem;">
-        胸に秘めた「やりたいこと」に燃えている人のそばで、その熱量を共有し、可能性を最大化するために一緒に走ることが、Hotokaze の使命です。
-      </p>
-      <p style="color:var(--muted); font-size:0.95rem; line-height:1.95; margin-bottom:2rem;">
-        顧客の情熱やアイデアを「帆」とし、私たちが提供するAIや最新技術を「風」に見立て、ビジネスの大きな変化の波にワクワクしながら共に乗っていく。
-      </p>
-
-      <ul class="vision-list">
-        <li>「作って終わり」ではなく、結果にコミットする伴走型制作</li>
-        <li>AIの活用で制作スピードを最大化し、コストを最小化</li>
-        <li>戦略・検証・改善という真に成果を生むプロセスへ焦点</li>
-        <li>LP/HPグロースを起点に、テクノロジーパートナーへ</li>
-      </ul>
+      <a href="#strengths" class="btn-outline">強みを見る</a>
     </div>
 
   </div>
@@ -1396,6 +1320,32 @@ const LP_HTML = `
       <div class="strength-title">導線全体を設計可能</div>
       <p class="strength-desc">LP単体だけでなく、フォームや追客などCV導線全体を最適化。一次CVから二次CVへの連携も含め、包括的に設計します。</p>
     </div>
+  </div>
+</section>
+
+<!-- ABOUT / MISSION -->
+<section id="about">
+  <div class="section-label">Mission & Vision</div>
+  <h2 class="section-title">私たちの想い・<br>事業コンセプト</h2>
+  <div class="section-divider"></div>
+
+  <div class="about-grid fade-in">
+    <div>
+      <p style="color:var(--muted); font-size:0.95rem; line-height:1.95; margin-bottom:1.5rem;">
+        胸に秘めた「やりたいこと」に燃えている人のそばで、その熱量を共有し、可能性を最大化するために一緒に走ることが、Hotokaze の使命です。
+      </p>
+      <p style="color:var(--muted); font-size:0.95rem; line-height:1.95; margin-bottom:2rem;">
+        顧客の情熱やアイデアを「帆」とし、私たちが提供するAIや最新技術を「風」に見立て、ビジネスの大きな変化の波にワクワクしながら共に乗っていく。
+      </p>
+
+      <ul class="vision-list">
+        <li>「作って終わり」ではなく、結果にコミットする伴走型制作</li>
+        <li>AIの活用で制作スピードを最大化し、コストを最小化</li>
+        <li>戦略・検証・改善という真に成果を生むプロセスへ焦点</li>
+        <li>LP/HPグロースを起点に、テクノロジーパートナーへ</li>
+      </ul>
+    </div>
+
   </div>
 </section>
 
@@ -1458,115 +1408,49 @@ const LP_HTML = `
   </div>
 </section>
 
-<!-- SERVICES -->
-<section id="services">
-  <div class="section-label">Services</div>
-  <h2 class="section-title">サービス内容<br><span style="font-size:0.7em; color:var(--muted);">3ヶ月LPグロースプログラム</span></h2>
-  <div class="section-divider"></div>
-
-  <div class="plans-grid fade-in">
-    <!-- Plan A -->
-    <div class="plan-card featured">
-      <div class="plan-label">PLAN A</div>
-      <div class="plan-name">LPグロース3ヶ月<br>プラン（標準）</div>
-      <div class="plan-divider"></div>
-      <ul class="plan-features">
-        <li>CV/KPIの定義、競合・訴求設計</li>
-        <li>計測設計（GA4/GTM）</li>
-        <li>LP5枚制作（確約）</li>
-        <li>ABテスト運用（月2本固定）</li>
-        <li>月次レポート（学び→仮説→改善）</li>
-      </ul>
-    </div>
-
-    <!-- Plan B -->
-    <div class="plan-card">
-      <div class="plan-label">PLAN B</div>
-      <div class="plan-name">LPグロース＋<br>軽度システム連携</div>
-      <div class="plan-divider"></div>
-      <ul class="plan-features">
-        <li>プランAの全内容を含む</li>
-        <li>会員/予約サイトとの簡易API連携</li>
-        <li>CPA/ROAS視点の訴求チューニング</li>
-        <li>クリエイティブ改善連携（バナー/訴求軸提案）</li>
-      </ul>
-    </div>
-
-    <!-- Plan C -->
-    <div class="plan-card">
-      <div class="plan-label">PLAN C</div>
-      <div class="plan-name">LPグロース＋<br>カスタム導線</div>
-      <div class="plan-divider"></div>
-      <ul class="plan-features">
-        <li>プランAの全内容を含む</li>
-        <li>予約/CRM/会員DB等の連携</li>
-        <li>体験型UI（診断/見積/シミュレーター等）</li>
-        <li>要件定義・カスタム実装対応</li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- Timeline -->
-  <div style="margin-top:4rem;" class="fade-in">
-    <div style="text-align:center; margin-bottom:1rem;">
-      <span style="font-size:0.8rem; color:var(--muted); letter-spacing:0.15em;">3ヶ月の確約ロードマップ</span>
-    </div>
-    <div class="timeline">
-      <div class="timeline-item">
-        <div class="timeline-dot"></div>
-        <div class="timeline-num">1枚</div>
-        <div class="timeline-label">1ヶ月目<br>基準LP制作<br>計測整備</div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-dot"></div>
-        <div class="timeline-num">2枚</div>
-        <div class="timeline-label">2ヶ月目<br>勝ち訴求候補<br>比較検証</div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-dot"></div>
-        <div class="timeline-num">2枚</div>
-        <div class="timeline-label">3ヶ月目<br>勝ち訴求強化<br>横展開</div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- FLOW -->
 <section id="flow">
   <div class="section-label">Meeting Flow</div>
-  <h2 class="section-title">初回打合せの流れ<br><span style="font-size:0.7em; color:var(--muted);">60分想定</span></h2>
+  <h2 class="section-title">はじめての打合せ<br><span style="font-size:0.7em; color:var(--muted);">約60分 ／ オンライン対応可</span></h2>
   <div class="section-divider"></div>
 
-  <div class="flow-steps fade-in">
-    <div class="flow-step">
-      <div class="step-num">01</div>
-      <div class="step-title">スタンス共有</div>
-      <p class="step-desc">ミッションの共有<br>CV定義・KPI仮決め<br>3ヶ月適合性確認</p>
+  <div class="flow-cards fade-in">
+    <div class="flow-card">
+      <div class="flow-card-num">STEP 01</div>
+      <div class="flow-card-icon">🤝</div>
+      <div class="flow-card-title">ご挨拶・ビジョン共有</div>
+      <p class="flow-card-desc">まず、あなたのやりたいことや目指したい姿を聞かせてください。何が得意で何に悩んでいるか、率直に話せる場にします。</p>
     </div>
-    <div class="flow-step">
-      <div class="step-num">02</div>
-      <div class="step-title">現状把握</div>
-      <p class="step-desc">ターゲット理解<br>強み・差別化整理<br>競合3社分析</p>
+    <div class="flow-card">
+      <div class="flow-card-num">STEP 02</div>
+      <div class="flow-card-icon">🔍</div>
+      <div class="flow-card-title">現状のヒアリング</div>
+      <p class="flow-card-desc">ターゲット・競合・強みを一緒に整理します。「なんとなく伸びない」の原因を具体化するための対話です。</p>
     </div>
-    <div class="flow-step">
-      <div class="step-num">03</div>
-      <div class="step-title">ゴール定義</div>
-      <p class="step-desc">一次・二次CVの確定<br>目標値の設定<br>判断タイミング決定</p>
+    <div class="flow-card">
+      <div class="flow-card-num">STEP 03</div>
+      <div class="flow-card-icon">🎯</div>
+      <div class="flow-card-title">目標の設定</div>
+      <p class="flow-card-desc">何をもって「成果」とするかをはっきり決めます。問い合わせ・購入・LINE登録など、あなたのビジネスに合ったゴールを定義します。</p>
     </div>
-    <div class="flow-step">
-      <div class="step-num">04</div>
-      <div class="step-title">導線設計</div>
-      <p class="step-desc">ボトルネック仮説<br>LP・フォーム・追客<br>流入経路の把握</p>
+    <div class="flow-card">
+      <div class="flow-card-num">STEP 04</div>
+      <div class="flow-card-icon">🗺️</div>
+      <div class="flow-card-title">改善ポイントの設計</div>
+      <p class="flow-card-desc">LP・広告・フォームの流れを整理し、「どこで離脱しているか」の仮説を立てます。改善の優先順位も一緒に考えます。</p>
     </div>
-    <div class="flow-step">
-      <div class="step-num">05</div>
-      <div class="step-title">提案骨子</div>
-      <p class="step-desc">3ヶ月ロードマップ<br>開発Lv仮判定<br>改善サイクル提示</p>
+    <div class="flow-card">
+      <div class="flow-card-num">STEP 05</div>
+      <div class="flow-card-icon">📋</div>
+      <div class="flow-card-title">プランのご提案</div>
+      <p class="flow-card-desc">進め方・費用感・スケジュールをわかりやすくご説明します。「これなら動ける」と感じていただける内容を目指します。</p>
     </div>
-    <div class="flow-step">
-      <div class="step-num">06</div>
-      <div class="step-title">次アクション</div>
-      <p class="step-desc">契約条件確認<br>価格構造の説明<br>開始日・期限の決定</p>
+    <div class="flow-card">
+      <div class="flow-card-num">STEP 06</div>
+      <div class="flow-card-icon">🚀</div>
+      <div class="flow-card-title">スタートの確認</div>
+      <p class="flow-card-desc">開始日・ご契約条件を確定します。疑問点はここで全部解消して、安心してスタートできる状態を作ります。</p>
     </div>
   </div>
 </section>
