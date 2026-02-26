@@ -7,7 +7,7 @@ const TEAL = "#008080";
 const TEAL_BG = "#00808014";
 const TEAL_BORDER = "#00808077";
 
-type Phase = "systemType" | "questions" | "contact";
+type Phase = "systemType" | "questions" | "email" | "contact";
 type ModalType = "terms" | "privacy" | null;
 
 interface Question {
@@ -23,8 +23,6 @@ interface ContactInfo {
   company: string;
   email: string;
   phone: string;
-  lineId: string;
-  preferredDate: string;
 }
 
 // ============================================================
@@ -238,11 +236,10 @@ const QUESTION_SETS: Record<string, Question[]> = {
   ],
 
   "未定 / 相談したい": [
-    // Q2 目的（簡易）
+    // Q2 目的（簡易）→ 単一選択に変更
     {
       question: "今回の目的に近いものはどれですか？",
-      type: "multiSelect",
-      subtitle: "複数選択可",
+      type: "select",
       options: [
         "まずは名刺代わりのページがほしい",
         "集客や広告用のページがほしい",
@@ -302,7 +299,7 @@ const QUESTION_SETS: Record<string, Question[]> = {
         "まだ整理できていない / 相談したい",
       ],
     },
-    // Q8 予算感
+    // Q7 予算感
     {
       question: "予算の目安を教えてください",
       type: "select",
@@ -492,12 +489,11 @@ export default function EstimateForm() {
     company: "",
     email: "",
     phone: "",
-    lineId: "",
-    preferredDate: "",
   });
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [emailError, setEmailError] = useState("");
   const [direction, setDirection] = useState<"forward" | "backward">("forward");
   const [animKey, setAnimKey] = useState(0);
   const [modal, setModal] = useState<ModalType>(null);
@@ -546,8 +542,9 @@ export default function EstimateForm() {
         setMultiSelected([]);
       }
     } else {
+      // 最後の質問 → メールアドレスページへ
       advance("forward");
-      setPhase("contact");
+      setPhase("email");
     }
   };
 
@@ -555,6 +552,21 @@ export default function EstimateForm() {
   const confirmMultiSelect = () => {
     const answer = multiSelected.join("、");
     answerAndAdvance(answer);
+  };
+
+  // メールページから連絡先ページへ
+  const goToContact = () => {
+    if (!contact.email.trim()) {
+      setEmailError("メールアドレスを入力してください。");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email)) {
+      setEmailError("正しいメールアドレスを入力してください。");
+      return;
+    }
+    setEmailError("");
+    advance("forward");
+    setPhase("contact");
   };
 
   // 戻る
@@ -576,7 +588,8 @@ export default function EstimateForm() {
         advance("backward");
         setPhase("systemType");
       }
-    } else if (phase === "contact") {
+    } else if (phase === "email") {
+      // メールページ → 最後の質問に戻る
       const lastQ = questions.length - 1;
       advance("backward");
       setCurrentQ(lastQ);
@@ -588,6 +601,10 @@ export default function EstimateForm() {
         setMultiSelected([]);
       }
       setPhase("questions");
+    } else if (phase === "contact") {
+      // 連絡先 → メールページに戻る
+      advance("backward");
+      setPhase("email");
     }
   };
 
@@ -595,6 +612,7 @@ export default function EstimateForm() {
   const submitEstimate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!contact.name.trim()) { setError("お名前を入力してください。"); return; }
+    if (!contact.phone.trim()) { setError("電話番号を入力してください。"); return; }
     if (!contact.email.trim()) { setError("メールアドレスを入力してください。"); return; }
     if (!agreedToTerms) { setError("利用規約・プライバシーポリシーへの同意が必要です。"); return; }
     setSubmitting(true);
@@ -623,10 +641,11 @@ export default function EstimateForm() {
   };
 
   // プログレスバー
-  const totalSteps = 1 + questions.length + 1; // Q1 + questions + contact
+  const totalSteps = 1 + questions.length + 1 + 1; // Q1 + questions + email + contact
   let currentStep = 0;
   if (phase === "systemType") currentStep = 0;
   else if (phase === "questions") currentStep = 1 + currentQ;
+  else if (phase === "email") currentStep = 1 + questions.length;
   else if (phase === "contact") currentStep = totalSteps;
   const progressPct = totalSteps > 0 ? (currentStep / totalSteps) * 100 : 0;
 
@@ -702,7 +721,7 @@ export default function EstimateForm() {
                 )}
               </div>
 
-              {/* 単一選択 */}
+              {/* 単一選択 → クリック即遷移 */}
               {questions[currentQ].type === "select" && (
                 <div className="space-y-2 flex-1">
                   {questions[currentQ].options!.map((opt) => (
@@ -813,12 +832,80 @@ export default function EstimateForm() {
             </div>
           )}
 
+          {/* ======== フェーズ: メールアドレス ======== */}
+          {phase === "email" && (
+            <div className="flex flex-col flex-1">
+              {/* 完了アイコン */}
+              <div className="text-center mb-6">
+                <div
+                  className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+                  style={{ background: `${TEAL}15`, border: `2px solid ${TEAL}40` }}
+                >
+                  <svg className="w-7 h-7" fill="none" stroke={TEAL} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <h2 className="text-base font-bold text-gray-900 leading-snug">
+                  見積もり情報の入力が<br />完了しました
+                </h2>
+                <p className="text-xs text-gray-400 mt-1.5 leading-relaxed">
+                  AIが作成した見積もりをメールでお届けします。<br />
+                  メールアドレスを入力してください。
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 mb-1.5">
+                  メールアドレス <span className="text-red-400">*</span>
+                </label>
+                <input
+                  type="email"
+                  value={contact.email}
+                  onChange={(e) => { setContact({ ...contact, email: e.target.value }); setEmailError(""); }}
+                  placeholder="example@company.com"
+                  required
+                  className="w-full rounded-2xl px-4 py-3 text-sm text-gray-700 placeholder-gray-300 focus:outline-none bg-gray-50 border-2 border-gray-100 transition-colors"
+                  onFocus={(e) => (e.target.style.borderColor = TEAL_BORDER)}
+                  onBlur={(e) => (e.target.style.borderColor = "#f3f4f6")}
+                  onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); goToContact(); } }}
+                />
+              </div>
+
+              {emailError && (
+                <div className="mt-3 flex items-center gap-2 text-xs text-red-500 bg-red-50 border border-red-100 rounded-xl px-3 py-2.5">
+                  <span>⚠️</span><span>{emailError}</span>
+                </div>
+              )}
+
+              <p className="text-[11px] text-gray-400 mt-3 flex items-center gap-1">
+                <span>🔒</span> 見積もり結果の送付にのみ使用します。
+              </p>
+
+              <button
+                type="button"
+                onClick={goToContact}
+                className="mt-5 w-full font-semibold py-3.5 rounded-full text-sm text-white transition-all duration-200"
+                style={{ backgroundColor: TEAL, boxShadow: `0 4px 14px ${TEAL}44` }}
+              >
+                次へ進む
+              </button>
+
+              <button
+                type="button"
+                onClick={goPrev}
+                className="mt-3 w-full py-2.5 text-sm text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                ← 戻る
+              </button>
+            </div>
+          )}
+
           {/* ======== フェーズ: 連絡先 ======== */}
           {phase === "contact" && (
             <form onSubmit={submitEstimate} className="flex flex-col flex-1">
               <div className="mb-5">
                 <h2 className="text-base font-bold text-gray-900">連絡先を教えてください</h2>
-                <p className="text-xs text-gray-400 mt-0.5">AIが作成した見積もりをメールでお届けします</p>
+                <p className="text-xs text-gray-400 mt-0.5">見積もり結果と一緒にご案内をお届けします</p>
               </div>
 
               {/* サマリー */}
@@ -827,16 +914,18 @@ export default function EstimateForm() {
                 style={{ borderColor: TEAL_BORDER, backgroundColor: TEAL_BG }}
               >
                 <p className="text-[10px] font-semibold tracking-wider uppercase text-gray-400 mb-2">入力内容の確認</p>
-                <div className="space-y-1.5 text-xs">
-                  <div className="flex gap-2">
-                    <span className="text-gray-400 w-20 shrink-0">種別</span>
-                    <span className="text-gray-800 font-medium">{systemType}</span>
+                <div className="space-y-2 text-xs max-h-40 overflow-y-auto">
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-gray-400 text-[10px]">種別</span>
+                    <span className="text-gray-800 font-medium break-words">{systemType}</span>
                   </div>
-                  {questions.slice(0, 3).map((q, i) => (
-                    <div key={i} className="flex gap-2">
-                      <span className="text-gray-400 w-20 shrink-0 leading-tight">{q.question.slice(0, 8)}…</span>
-                      <span className="text-gray-700 truncate">{answers[i] || "—"}</span>
-                    </div>
+                  {questions.map((q, i) => (
+                    answers[i] ? (
+                      <div key={i} className="flex flex-col gap-0.5">
+                        <span className="text-gray-400 text-[10px]">{q.question}</span>
+                        <span className="text-gray-700 break-words leading-relaxed">{answers[i]}</span>
+                      </div>
+                    ) : null
                   ))}
                 </div>
               </div>
@@ -860,6 +949,23 @@ export default function EstimateForm() {
                   />
                 </div>
 
+                {/* 電話番号 */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 mb-1.5">
+                    電話番号 <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    value={contact.phone}
+                    onChange={(e) => setContact({ ...contact, phone: e.target.value })}
+                    placeholder="090-1234-5678"
+                    required
+                    className="w-full rounded-2xl px-4 py-3 text-sm text-gray-700 placeholder-gray-300 focus:outline-none bg-gray-50 border-2 border-gray-100 transition-colors"
+                    onFocus={(e) => (e.target.style.borderColor = TEAL_BORDER)}
+                    onBlur={(e) => (e.target.style.borderColor = "#f3f4f6")}
+                  />
+                </div>
+
                 {/* 会社名 */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 mb-1.5">
@@ -870,71 +976,6 @@ export default function EstimateForm() {
                     value={contact.company}
                     onChange={(e) => setContact({ ...contact, company: e.target.value })}
                     placeholder="株式会社○○（任意）"
-                    className="w-full rounded-2xl px-4 py-3 text-sm text-gray-700 placeholder-gray-300 focus:outline-none bg-gray-50 border-2 border-gray-100 transition-colors"
-                    onFocus={(e) => (e.target.style.borderColor = TEAL_BORDER)}
-                    onBlur={(e) => (e.target.style.borderColor = "#f3f4f6")}
-                  />
-                </div>
-
-                {/* メールアドレス */}
-                <div>
-                  <label className="block text-xs font-semibold text-gray-500 mb-1.5">
-                    メールアドレス <span className="text-red-400">*</span>
-                  </label>
-                  <input
-                    type="email"
-                    value={contact.email}
-                    onChange={(e) => setContact({ ...contact, email: e.target.value })}
-                    placeholder="example@company.com"
-                    required
-                    className="w-full rounded-2xl px-4 py-3 text-sm text-gray-700 placeholder-gray-300 focus:outline-none bg-gray-50 border-2 border-gray-100 transition-colors"
-                    onFocus={(e) => (e.target.style.borderColor = TEAL_BORDER)}
-                    onBlur={(e) => (e.target.style.borderColor = "#f3f4f6")}
-                  />
-                </div>
-
-                {/* 電話番号 */}
-                <div>
-                  <label className="block text-xs font-semibold text-gray-500 mb-1.5">
-                    電話番号
-                  </label>
-                  <input
-                    type="tel"
-                    value={contact.phone}
-                    onChange={(e) => setContact({ ...contact, phone: e.target.value })}
-                    placeholder="090-1234-5678（任意）"
-                    className="w-full rounded-2xl px-4 py-3 text-sm text-gray-700 placeholder-gray-300 focus:outline-none bg-gray-50 border-2 border-gray-100 transition-colors"
-                    onFocus={(e) => (e.target.style.borderColor = TEAL_BORDER)}
-                    onBlur={(e) => (e.target.style.borderColor = "#f3f4f6")}
-                  />
-                </div>
-
-                {/* LINE ID */}
-                <div>
-                  <label className="block text-xs font-semibold text-gray-500 mb-1.5">
-                    LINE ID または LINE連絡方法
-                  </label>
-                  <input
-                    type="text"
-                    value={contact.lineId}
-                    onChange={(e) => setContact({ ...contact, lineId: e.target.value })}
-                    placeholder="@line_id（任意）"
-                    className="w-full rounded-2xl px-4 py-3 text-sm text-gray-700 placeholder-gray-300 focus:outline-none bg-gray-50 border-2 border-gray-100 transition-colors"
-                    onFocus={(e) => (e.target.style.borderColor = TEAL_BORDER)}
-                    onBlur={(e) => (e.target.style.borderColor = "#f3f4f6")}
-                  />
-                </div>
-
-                {/* 相談希望日時 */}
-                <div>
-                  <label className="block text-xs font-semibold text-gray-500 mb-1.5">
-                    相談希望日時
-                  </label>
-                  <input
-                    type="text"
-                    value={contact.preferredDate}
-                    onChange={(e) => setContact({ ...contact, preferredDate: e.target.value })}
-                    placeholder="例: 平日午前中、3/10 14:00〜（任意）"
                     className="w-full rounded-2xl px-4 py-3 text-sm text-gray-700 placeholder-gray-300 focus:outline-none bg-gray-50 border-2 border-gray-100 transition-colors"
                     onFocus={(e) => (e.target.style.borderColor = TEAL_BORDER)}
                     onBlur={(e) => (e.target.style.borderColor = "#f3f4f6")}
