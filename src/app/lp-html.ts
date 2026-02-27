@@ -601,30 +601,35 @@ const LP_HTML = `
 
     .market-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2.5rem;
-      align-items: stretch;
+      grid-template-columns: 2fr auto 3fr;
+      gap: 0 2rem;
+      align-items: center;
     }
 
     .market-vs {
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #1a2235, #0a0c14);
-      border: 2px solid rgba(200,169,110,0.4);
-      font-family: 'Inter', sans-serif;
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
+      gap: 0.3rem;
+      flex-shrink: 0;
       color: var(--gold);
-      z-index: 5;
+    }
+
+    .market-vs-arrow {
+      font-size: 2.5rem;
+      line-height: 1;
+      color: var(--gold);
+      opacity: 0.7;
+    }
+
+    .market-vs-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      text-transform: uppercase;
     }
 
     .market-card {
@@ -888,6 +893,9 @@ const LP_HTML = `
     #flow {
       background: var(--dark2);
       overflow: hidden;
+      /* Remove horizontal padding so carousel uses full viewport width */
+      padding-left: 0;
+      padding-right: 0;
     }
 
     .flow-carousel {
@@ -897,71 +905,72 @@ const LP_HTML = `
       padding: 2rem 0;
     }
 
+    /*
+     * Track = 2 sets × (6 items + 5 arrows) = 200vw exactly.
+     * Each set fills 100vw: 6 items + 5 arrows (each 2rem) = 100vw.
+     * Animation translates -100vw for seamless loop.
+     * Speed 1/3 of original → 72s.
+     */
     .flow-track {
       display: flex;
-      gap: 2rem;
-      animation: flowScroll 24s linear infinite;
-      width: max-content;
-    }
-
-    .flow-track:hover {
-      animation-play-state: paused;
+      gap: 0;
+      width: 200vw;
+      animation: flowScroll 72s linear infinite;
     }
 
     .flow-item {
       flex-shrink: 0;
-      width: 220px;
+      width: calc((100vw - 5 * 2rem) / 6);
       background: var(--dark3);
       border: 1px solid var(--border);
       border-radius: 1.2rem;
-      padding: 1.8rem 1.5rem;
+      padding: 1.4rem 1rem;
       text-align: center;
-      transition: border-color 0.3s, box-shadow 0.3s;
     }
 
     .flow-item-num {
       font-family: 'Inter', sans-serif;
-      font-size: 0.65rem;
+      font-size: 1.3rem;
       font-weight: 700;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.08em;
       color: var(--accent);
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.4rem;
     }
 
     .flow-item-icon {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
+      font-size: 1.6rem;
+      margin-bottom: 0.4rem;
       line-height: 1;
     }
 
     .flow-item-title {
       font-family: 'Noto Serif JP', serif;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       font-weight: 700;
       color: var(--text);
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.3rem;
     }
 
     .flow-item-desc {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       color: var(--muted);
-      line-height: 1.6;
+      line-height: 1.5;
     }
 
     .flow-arrow {
       flex-shrink: 0;
+      width: 2rem;
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--accent);
-      opacity: 0.3;
-      font-size: 1.2rem;
+      opacity: 0.25;
+      font-size: 0.9rem;
     }
 
-    /* Keyframes: 6 items + duplicates for seamless loop, each pauses at center 1s */
     @keyframes flowScroll {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-100vw); }
     }
 
     .flow-carousel::before,
@@ -970,7 +979,7 @@ const LP_HTML = `
       position: absolute;
       top: 0;
       bottom: 0;
-      width: 80px;
+      width: 60px;
       z-index: 2;
       pointer-events: none;
     }
@@ -1234,18 +1243,23 @@ const LP_HTML = `
       /* --- Market --- */
       .market-grid {
         grid-template-columns: 1fr;
-        gap: 1.8rem;
+        gap: 0;
       }
 
       .market-card { padding: 1.8rem; }
 
       .market-vs {
-        position: relative;
-        left: auto;
-        top: auto;
-        transform: none;
-        margin: -0.6rem auto;
+        flex-direction: row;
+        padding: 0.8rem 0;
+        gap: 0.5rem;
       }
+
+      .market-vs-arrow {
+        font-size: 1.6rem;
+        transform: rotate(90deg);
+      }
+
+      .market-vs-label { display: none; }
 
       /* --- Services --- */
       #services::before { display: none; }
@@ -1344,7 +1358,7 @@ const LP_HTML = `
     <li><a href="#strengths">強み</a></li>
     <li><a href="#market">市場課題</a></li>
     <li><a href="#pricing">プラン</a></li>
-    <li><a href="#contact" class="nav-cta">無料相談</a></li>
+    <li><a href="/estimate" class="nav-cta">今すぐ見積もり</a></li>
   </ul>
   <button class="nav-hamburger" id="navHamburger" aria-label="メニューを開く">
     <span></span>
@@ -1372,7 +1386,6 @@ const LP_HTML = `
 
     <div class="hero-btns">
       <a href="/estimate" class="btn-primary">今すぐ１分で見積もり</a>
-      <a href="#strengths" class="btn-outline">強みを見る</a>
     </div>
 
   </div>
@@ -1437,10 +1450,10 @@ const LP_HTML = `
   <h2 class="section-title">市場課題と<br>解決アプローチ</h2>
   <div class="section-divider"></div>
 
-  <div class="market-grid fade-in" style="position:relative;">
+  <div class="market-grid fade-in">
     <div class="market-card market-card--problem">
       <div class="market-card-head">
-        <div class="market-badge badge-problem">従来モデルの課題</div>
+        <div class="market-badge badge-problem">従来モデル</div>
       </div>
       <ul class="market-list market-list--problem">
         <li>
@@ -1458,7 +1471,10 @@ const LP_HTML = `
       </ul>
     </div>
 
-    <div class="market-vs">VS</div>
+    <div class="market-vs">
+      <div class="market-vs-arrow">→</div>
+      <div class="market-vs-label">vs</div>
+    </div>
 
     <div class="market-card market-card--solution">
       <div class="market-card-head">
