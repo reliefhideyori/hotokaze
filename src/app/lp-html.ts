@@ -905,107 +905,75 @@ const LP_HTML = `
       padding-right: 0;
     }
 
-    #flow .section-label,
-    #flow .section-title,
-    #flow .section-divider {
-      padding-left: 5%;
-      padding-right: 5%;
+    .flow-header {
+      padding: 0 5%;
     }
 
-    .flow-carousel {
-      position: relative;
-      width: 100%;
-      overflow: hidden;
-      padding: 2rem 0;
+    .flow-steps-wrap {
+      padding: 3rem 5% 2rem;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
-    /*
-     * Track = 2 sets × (6 items + 5 arrows) = 200vw exactly.
-     * Each set fills 100vw: 6 items + 5 arrows (each 2rem) = 100vw.
-     * Animation translates -100vw for seamless loop.
-     * Speed 1/3 of original → 72s.
-     */
-    .flow-track {
+    .flow-steps {
       display: flex;
+      align-items: flex-start;
+      min-width: 680px;
       gap: 0;
-      width: 200vw;
-      animation: flowScroll 72s linear infinite;
     }
 
-    .flow-item {
-      flex-shrink: 0;
-      width: calc((100vw - 5 * 2rem) / 6);
-      background: var(--dark3);
-      border: 1px solid var(--border);
-      border-radius: 1.2rem;
-      padding: 1.4rem 1rem;
+    .flow-step {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       text-align: center;
+      padding: 0 0.4rem;
     }
 
-    .flow-item-num {
+    .flow-step-num {
+      width: 3.5rem;
+      height: 3.5rem;
+      border-radius: 50%;
+      border: 1px solid rgba(79,156,249,0.35);
+      background: var(--dark3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-family: 'Inter', sans-serif;
-      font-size: 1.3rem;
+      font-size: 1rem;
       font-weight: 700;
-      letter-spacing: 0.08em;
       color: var(--accent);
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.9rem;
+      flex-shrink: 0;
     }
 
-    .flow-item-icon {
-      font-size: 1.6rem;
-      margin-bottom: 0.4rem;
+    .flow-step-icon {
+      font-size: 1.4rem;
+      margin-bottom: 0.45rem;
       line-height: 1;
     }
 
-    .flow-item-title {
-      font-family: 'Noto Serif JP', serif;
-      font-size: 0.85rem;
+    .flow-step-title {
+      font-size: 0.82rem;
       font-weight: 700;
       color: var(--text);
       margin-bottom: 0.3rem;
     }
 
-    .flow-item-desc {
+    .flow-step-desc {
       font-size: 0.7rem;
       color: var(--muted);
-      line-height: 1.5;
+      line-height: 1.55;
     }
 
-    .flow-arrow {
+    .flow-connector {
       flex-shrink: 0;
-      width: 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--accent);
-      opacity: 0.25;
-      font-size: 0.9rem;
-    }
-
-    @keyframes flowScroll {
-      0%   { transform: translateX(0); }
-      100% { transform: translateX(-100vw); }
-    }
-
-    .flow-carousel::before,
-    .flow-carousel::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 60px;
-      z-index: 2;
-      pointer-events: none;
-    }
-
-    .flow-carousel::before {
-      left: 0;
-      background: linear-gradient(90deg, var(--dark2) 0%, transparent 100%);
-    }
-
-    .flow-carousel::after {
-      right: 0;
-      background: linear-gradient(270deg, var(--dark2) 0%, transparent 100%);
+      width: 1.5rem;
+      height: 1px;
+      background: rgba(79,156,249,0.2);
+      margin-top: 1.75rem;
+      align-self: flex-start;
     }
 
     /* ── PRICING ── */
@@ -1316,9 +1284,9 @@ const LP_HTML = `
         line-height: 1.5;
       }
 
-      /* --- Flow carousel --- */
-      .flow-item { width: 190px; padding: 1.5rem 1.2rem; }
-      .flow-carousel::before, .flow-carousel::after { width: 40px; }
+      /* --- Flow steps --- */
+      .flow-steps-wrap { padding: 2rem 4% 1.5rem; }
+      .flow-steps { min-width: 560px; }
 
       /* --- Pricing --- */
       .lv-grid {
@@ -1530,97 +1498,62 @@ const LP_HTML = `
 
 <!-- FLOW -->
 <section id="flow">
-  <div class="section-label">Meeting Flow</div>
-  <h2 class="section-title">はじめての打合せ<br><span style="font-size:0.7em; color:var(--muted);">約60分 ／ オンライン対応可</span></h2>
-  <div class="section-divider"></div>
+  <div class="flow-header">
+    <div class="section-label">Meeting Flow</div>
+    <h2 class="section-title">はじめての打合せ<br><span style="font-size:0.7em; color:var(--muted);">約60分 ／ オンライン対応可</span></h2>
+    <div class="section-divider"></div>
+  </div>
 
-  <div class="flow-carousel">
-    <div class="flow-track">
-      <!-- 1st set -->
-      <div class="flow-item">
-        <div class="flow-item-num">STEP 01</div>
-        <div class="flow-item-icon">🤝</div>
-        <div class="flow-item-title">ビジョン共有</div>
-        <p class="flow-item-desc">やりたいことや目指す姿を共有</p>
+  <div class="flow-steps-wrap">
+    <div class="flow-steps">
+
+      <div class="flow-step">
+        <div class="flow-step-num">01</div>
+        <div class="flow-step-icon">🤝</div>
+        <div class="flow-step-title">ビジョン共有</div>
+        <p class="flow-step-desc">やりたいことや<br>目指す姿を共有</p>
       </div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-item">
-        <div class="flow-item-num">STEP 02</div>
-        <div class="flow-item-icon">🔍</div>
-        <div class="flow-item-title">現状ヒアリング</div>
-        <p class="flow-item-desc">ターゲット・競合・強みを整理</p>
+      <div class="flow-connector"></div>
+
+      <div class="flow-step">
+        <div class="flow-step-num">02</div>
+        <div class="flow-step-icon">🔍</div>
+        <div class="flow-step-title">現状ヒアリング</div>
+        <p class="flow-step-desc">ターゲット・競合・<br>強みを整理</p>
       </div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-item">
-        <div class="flow-item-num">STEP 03</div>
-        <div class="flow-item-icon">🎯</div>
-        <div class="flow-item-title">目標設定</div>
-        <p class="flow-item-desc">成果の定義とゴールを決定</p>
+      <div class="flow-connector"></div>
+
+      <div class="flow-step">
+        <div class="flow-step-num">03</div>
+        <div class="flow-step-icon">🎯</div>
+        <div class="flow-step-title">目標設定</div>
+        <p class="flow-step-desc">成果の定義と<br>ゴールを決定</p>
       </div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-item">
-        <div class="flow-item-num">STEP 04</div>
-        <div class="flow-item-icon">🗺️</div>
-        <div class="flow-item-title">改善設計</div>
-        <p class="flow-item-desc">離脱ポイントを特定し優先順位化</p>
+      <div class="flow-connector"></div>
+
+      <div class="flow-step">
+        <div class="flow-step-num">04</div>
+        <div class="flow-step-icon">🗺️</div>
+        <div class="flow-step-title">改善設計</div>
+        <p class="flow-step-desc">離脱ポイントを特定し<br>優先順位化</p>
       </div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-item">
-        <div class="flow-item-num">STEP 05</div>
-        <div class="flow-item-icon">📋</div>
-        <div class="flow-item-title">プラン提案</div>
-        <p class="flow-item-desc">進め方・費用・スケジュールを提示</p>
+      <div class="flow-connector"></div>
+
+      <div class="flow-step">
+        <div class="flow-step-num">05</div>
+        <div class="flow-step-icon">📋</div>
+        <div class="flow-step-title">プラン提案</div>
+        <p class="flow-step-desc">進め方・費用・<br>スケジュールを提示</p>
       </div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-item">
-        <div class="flow-item-num">STEP 06</div>
-        <div class="flow-item-icon">🚀</div>
-        <div class="flow-item-title">スタート</div>
-        <p class="flow-item-desc">契約条件を確定し制作開始</p>
+      <div class="flow-connector"></div>
+
+      <div class="flow-step">
+        <div class="flow-step-num">06</div>
+        <div class="flow-step-icon">🚀</div>
+        <div class="flow-step-title">スタート</div>
+        <p class="flow-step-desc">契約条件を確定し<br>制作開始</p>
       </div>
-      <div class="flow-arrow" style="margin-right:1rem;">→</div>
-      <!-- 2nd set (duplicate for seamless loop) -->
-      <div class="flow-item">
-        <div class="flow-item-num">STEP 01</div>
-        <div class="flow-item-icon">🤝</div>
-        <div class="flow-item-title">ビジョン共有</div>
-        <p class="flow-item-desc">やりたいことや目指す姿を共有</p>
-      </div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-item">
-        <div class="flow-item-num">STEP 02</div>
-        <div class="flow-item-icon">🔍</div>
-        <div class="flow-item-title">現状ヒアリング</div>
-        <p class="flow-item-desc">ターゲット・競合・強みを整理</p>
-      </div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-item">
-        <div class="flow-item-num">STEP 03</div>
-        <div class="flow-item-icon">🎯</div>
-        <div class="flow-item-title">目標設定</div>
-        <p class="flow-item-desc">成果の定義とゴールを決定</p>
-      </div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-item">
-        <div class="flow-item-num">STEP 04</div>
-        <div class="flow-item-icon">🗺️</div>
-        <div class="flow-item-title">改善設計</div>
-        <p class="flow-item-desc">離脱ポイントを特定し優先順位化</p>
-      </div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-item">
-        <div class="flow-item-num">STEP 05</div>
-        <div class="flow-item-icon">📋</div>
-        <div class="flow-item-title">プラン提案</div>
-        <p class="flow-item-desc">進め方・費用・スケジュールを提示</p>
-      </div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-item">
-        <div class="flow-item-num">STEP 06</div>
-        <div class="flow-item-icon">🚀</div>
-        <div class="flow-item-title">スタート</div>
-        <p class="flow-item-desc">契約条件を確定し制作開始</p>
-      </div>
+
     </div>
   </div>
 </section>
@@ -1631,9 +1564,10 @@ const LP_HTML = `
   <div class="contact-inner">
     <div class="section-label" style="text-align:center;">Contact</div>
     <div class="contact-box fade-in">
-      <h2>まず、話しましょう。</h2>
+      <h2>まず、AIで見積もってみてください。</h2>
       <p>
-        1分で見積もり。60分で方向性が見えます。
+        質問に答えるだけで、AIが費用の目安を1分で算出。<br>
+        登録不要・費用ゼロ。気軽に試せます。
       </p>
       <a href="/estimate" class="btn-primary" style="display:inline-block;">
         今すぐ１分で見積もり
