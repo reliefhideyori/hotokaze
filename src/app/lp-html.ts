@@ -905,6 +905,13 @@ const LP_HTML = `
       padding-right: 0;
     }
 
+    #flow .section-label,
+    #flow .section-title,
+    #flow .section-divider {
+      padding-left: 5%;
+      padding-right: 5%;
+    }
+
     .flow-carousel {
       position: relative;
       width: 100%;
@@ -1114,9 +1121,10 @@ const LP_HTML = `
     }
 
     .footer-logo {
-      font-family: 'Noto Serif JP', serif;
+      font-family: 'Inter', 'Noto Sans JP', sans-serif;
       font-size: 1.2rem;
       font-weight: 700;
+      letter-spacing: 0.05em;
       background: linear-gradient(135deg, var(--accent), var(--gold));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -1381,8 +1389,8 @@ const LP_HTML = `
     <div class="hero-tag">AI活用 × 導線設計 × 結果コミット</div>
 
     <h1 class="hero-mission">
-      <span class="accent-line" style="display:block;">売れるLPを、</span>
-      <span style="display:block;">半分のコストで。</span>
+      <span class="accent-line" style="display:block;">売れるLPを</span>
+      <span style="display:block;">半分のコストで</span>
     </h1>
 
     <p class="hero-sub">
@@ -1440,12 +1448,17 @@ const LP_HTML = `
   <div class="about-grid fade-in">
     <div>
       <p style="color:var(--muted); font-size:0.95rem; line-height:1.95; margin-bottom:1.5rem;">
-        胸に秘めた「やりたいこと」に燃えている人のそばで、その熱量を共有し、可能性を最大化するために一緒に走ることが、Hotokaze の使命です。
+        「LP制作会社に頼んだのに、全然問い合わせが来ない」「ページを作ったはいいけど、次に何をすればいいかわからない」——そんな声をよく耳にします。
+      </p>
+      <p style="color:var(--muted); font-size:0.95rem; line-height:1.95; margin-bottom:1.5rem;">
+        Hotokaze はその原因が、「制作して終わり」という構造にあると考えています。LPはマーケティング全体の一部であり、広告・集客・計測・改善まで一気通貫で動いてはじめて成果に繋がります。
+      </p>
+      <p style="color:var(--muted); font-size:0.95rem; line-height:1.95; margin-bottom:1.5rem;">
+        私たちはAIを活用してコストを従来比1/2以下に抑えながら、浮いたリソースを戦略設計と検証に注ぎ込みます。「どう集めるか」から「どう問い合わせに繋げるか」まで、経営者と同じ目線で考え、一緒に走る伴走者です。
       </p>
       <p style="color:var(--muted); font-size:0.95rem; line-height:1.95; margin-bottom:2rem;">
-        顧客の情熱やアイデアを「帆」とし、私たちが提供するAIや最新技術を「風」に見立て、ビジネスの大きな変化の波にワクワクしながら共に乗っていく。
+        顧客の情熱やアイデアを「帆」とし、私たちが提供するAI・戦略・技術を「風」に見立て、結果が出るまで共に前に進む。それが Hotokaze の使命であり、存在意義です。
       </p>
-
     </div>
 
   </div>
@@ -1511,7 +1524,6 @@ const LP_HTML = `
       「作って終わり」から<br>
       <span style="background:linear-gradient(135deg,var(--accent),var(--gold)); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">「最速で改善し、確実に成果」へ。</span>
     </p>
-    <p style="font-size:clamp(0.9rem,1.5vw,1.15rem); color:var(--muted); margin-top:1.2rem; letter-spacing:0.05em; position:relative; z-index:1;">CVの定義 〜 導線設計 〜 計測<br class="sp-br">〜 ABテストを一気通貫で設計</p>
   </div>
 </section>
 
@@ -1613,60 +1625,15 @@ const LP_HTML = `
   </div>
 </section>
 
-<!-- PRICING -->
-<section id="pricing">
-  <div class="section-label">Pricing Structure</div>
-  <h2 class="section-title">価格の考え方<br><span style="font-size:0.7em; color:var(--muted);">透明な開発Lv分け</span></h2>
-  <div class="section-divider"></div>
-
-  <p style="color:var(--muted); font-size:0.9rem; margin-bottom:2.5rem; max-width:600px;">
-    価格は基本的に同一。変動するのは、導線設計の際に必要となる追加開発がある場合のみ。開発内容をLvで透明化し、追加条件を事前に明示します。
-  </p>
-
-  <div class="lv-grid fade-in">
-    <div class="lv-card">
-      <span class="lv-tag lv0">Lv 0</span>
-      <div class="lv-title">追加なし（標準）</div>
-      <ul class="lv-items">
-        <li>通常LP制作・修正</li>
-        <li>フォーム設置・最適化</li>
-        <li>計測設計（GA4/GTM）</li>
-        <li>CV導線設計</li>
-      </ul>
-    </div>
-
-    <div class="lv-card">
-      <span class="lv-tag lv1">Lv 1</span>
-      <div class="lv-title">既存ツール連携</div>
-      <ul class="lv-items">
-        <li>既存ツールの標準API連携</li>
-        <li>予約システム連携</li>
-        <li>外部サービスとのデータ連携</li>
-      </ul>
-    </div>
-
-    <div class="lv-card">
-      <span class="lv-tag lv2">Lv 2</span>
-      <div class="lv-title">カスタム実装（別途見積）</div>
-      <ul class="lv-items">
-        <li>体験型アプリ・複雑UI</li>
-        <li>会員機能・本人確認</li>
-        <li>決済システム実装</li>
-        <li>複雑なフォーム分岐</li>
-      </ul>
-    </div>
-  </div>
-</section>
 
 <!-- CONTACT -->
 <section id="contact">
   <div class="contact-inner">
     <div class="section-label" style="text-align:center;">Contact</div>
     <div class="contact-box fade-in">
-      <h2>一緒に、新しい海へ</h2>
+      <h2>まず、話しましょう。</h2>
       <p>
-        あなたの熱量と事業を理解した上で、<br>
-        最適な3ヶ月のロードマップをご提案します。
+        1分で見積もり。60分で方向性が見えます。
       </p>
       <a href="/estimate" class="btn-primary" style="display:inline-block;">
         今すぐ１分で見積もり
