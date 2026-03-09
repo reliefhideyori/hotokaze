@@ -135,6 +135,7 @@ const LP_HTML = `
       min-height: 100vh;
       display: flex;
       align-items: center;
+      justify-content: center;
       position: relative;
       padding: 8rem 5% 4rem;
       overflow: hidden;
@@ -157,31 +158,31 @@ const LP_HTML = `
       100% { transform: translateY(60px); }
     }
 
-    /* Japanese brushstroke element - 風 */
+    /* Japanese brushstroke element - 風（右） */
     #hero::after {
       content: '風';
       position: absolute;
-      right: 5%;
-      top: 22%;
+      right: 3%;
+      top: 10%;
       font-family: 'Noto Serif JP', serif;
-      font-size: clamp(10rem, 20vw, 22rem);
+      font-size: clamp(10rem, 18vw, 20rem);
       font-weight: 700;
       color: rgba(79,156,249,0.07);
       pointer-events: none;
       line-height: 1;
     }
 
-    /* Japanese brushstroke element - 帆 */
+    /* Japanese brushstroke element - 帆（左） */
     #hero .hero-kanji-sail {
       position: absolute;
-      right: 20%;
-      top: 48%;
+      left: 3%;
+      top: 10%;
       font-family: 'Noto Serif JP', serif;
-      font-size: clamp(8rem, 16vw, 18rem);
+      font-size: clamp(10rem, 18vw, 20rem);
       font-weight: 700;
       color: rgba(200,169,110,0.07);
       pointer-events: none;
-      line-height: 0.9;
+      line-height: 1;
       user-select: none;
       z-index: 0;
     }
@@ -189,7 +190,11 @@ const LP_HTML = `
     .hero-content {
       position: relative;
       z-index: 1;
-      max-width: 820px;
+      max-width: 720px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .hero-tag {
@@ -236,16 +241,18 @@ const LP_HTML = `
 
     .hero-sub {
       color: var(--muted);
-      font-size: 1.1rem;
-      max-width: 580px;
-      margin-bottom: 2.5rem;
-      line-height: 2;
+      font-size: 1.05rem;
+      max-width: 560px;
+      margin: 0 auto 2.5rem;
+      line-height: 2.1;
+      text-align: center;
     }
 
     .hero-btns {
       display: flex;
       gap: 1rem;
       flex-wrap: wrap;
+      justify-content: center;
     }
 
     .btn-primary {
@@ -1190,7 +1197,7 @@ const LP_HTML = `
       /* --- Hero --- */
       #hero {
         padding: 7rem 5% 3.5rem;
-        align-items: flex-start;
+        align-items: center;
       }
 
       #hero::after { display: none; }
