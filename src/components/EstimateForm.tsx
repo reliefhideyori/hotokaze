@@ -12,7 +12,7 @@ type ModalType = "terms" | "privacy" | null;
 
 interface Question {
   question: string;
-  type: "select" | "multiSelect" | "text";
+  type: "select" | "text";
   options?: string[];
   required?: boolean;
   subtitle?: string;
@@ -26,7 +26,7 @@ interface ContactInfo {
 }
 
 // ============================================================
-// 3ルート分岐: Q1 選択肢
+// Q1 選択肢
 // ============================================================
 const SYSTEM_TYPES = [
   { label: "ホームページ", icon: "🌐", desc: "会社・お店の紹介サイトを作りたい" },
@@ -35,15 +35,13 @@ const SYSTEM_TYPES = [
 ];
 
 // ============================================================
-// ルート別 質問セット (Q2〜Q8)
+// ルート別 質問セット — すべて単一選択・クリックで即遷移
 // ============================================================
 const QUESTION_SETS: Record<string, Question[]> = {
   "ホームページ": [
-    // Q2 目的
     {
-      question: "今回の目的を教えてください",
-      type: "multiSelect",
-      subtitle: "複数選択可",
+      question: "一番の目的を教えてください",
+      type: "select",
       options: [
         "会社・お店の信頼性を上げたい",
         "問い合わせを増やしたい",
@@ -53,20 +51,16 @@ const QUESTION_SETS: Record<string, Question[]> = {
         "まだ整理できていない / 相談したい",
       ],
     },
-    // Q3 現在の状況
     {
-      question: "現在の状況を教えてください",
-      type: "multiSelect",
-      subtitle: "複数選択可",
+      question: "現在のWeb状況を教えてください",
+      type: "select",
       options: [
-        "なし（独自ドメイン未取得）",
-        "SNS（Instagram / LINE など）",
-        "古い/簡易的なホームページ（作り直したい）",
-        "メールアドレス",
+        "何もない（これが最初のWeb展開）",
+        "SNSのみ（HP/LPはない）",
+        "古いHPがある（作り直したい）",
         "わからない / 相談したい",
       ],
     },
-    // Q4 希望時期
     {
       question: "希望する時期を教えてください",
       type: "select",
@@ -77,7 +71,6 @@ const QUESTION_SETS: Record<string, Question[]> = {
         "時期は未定（まず相談したい）",
       ],
     },
-    // Q5 想定規模
     {
       question: "想定するページ規模を教えてください",
       type: "select",
@@ -88,39 +81,26 @@ const QUESTION_SETS: Record<string, Question[]> = {
         "わからない / 提案してほしい",
       ],
     },
-    // Q6 必要な機能
     {
-      question: "必要な機能はありますか？",
-      type: "multiSelect",
-      subtitle: "複数選択可・任意",
+      question: "最も必要な機能を1つ選んでください",
+      type: "select",
       options: [
         "問い合わせフォーム",
-        "LINE連携",
-        "お知らせ更新（ブログ）",
         "予約機能",
+        "お知らせ更新（ブログ）",
         "採用応募フォーム",
-        "多言語対応",
-        "写真撮影もお願いしたい",
-        "保守・更新もお願いしたい",
         "特になし / 相談したい",
       ],
     },
-    // Q7 素材の準備状況
     {
-      question: "手元にある素材を教えてください",
-      type: "multiSelect",
-      subtitle: "複数選択可",
+      question: "素材の準備状況を教えてください",
+      type: "select",
       options: [
-        "ロゴ",
-        "写真素材",
-        "文章（会社説明・サービス説明）",
-        "サービス資料 / チラシ",
-        "既存サイトの内容を流用したい",
+        "ほぼ揃っている（ロゴ・写真・文章）",
+        "一部ある",
         "何もない（全部相談したい）",
-        "わからない",
       ],
     },
-    // Q8 予算感
     {
       question: "予算の目安を教えてください",
       type: "select",
@@ -136,45 +116,35 @@ const QUESTION_SETS: Record<string, Question[]> = {
   ],
 
   "LP（広告用の1枚ページ）": [
-    // Q2 目的
     {
-      question: "今回の目的を教えてください",
-      type: "multiSelect",
-      subtitle: "複数選択可",
+      question: "一番の目的を教えてください",
+      type: "select",
       options: [
-        "広告用に1ページ作りたい",
         "問い合わせ・予約を増やしたい",
         "新商品・新サービスを告知したい",
         "資料請求を増やしたい",
-        "集客をしたい",
+        "集客を強化したい",
         "まだ整理できていない / 相談したい",
       ],
     },
-    // Q3 現在の状況
     {
-      question: "現在の状況を教えてください",
-      type: "multiSelect",
-      subtitle: "複数選択可",
+      question: "LPは今回が初めてですか？",
+      type: "select",
       options: [
         "初めて作る",
         "すでにLPがある（改善したい）",
-        "広告は回している",
-        "広告はこれから",
         "わからない / 相談したい",
       ],
     },
-    // Q4 希望時期
     {
-      question: "希望する時期を教えてください",
+      question: "広告の状況を教えてください",
       type: "select",
       options: [
-        "できるだけ早く（2週間以内）",
-        "1か月以内",
-        "2〜3か月以内",
-        "時期は未定（まず相談したい）",
+        "広告はすでに回している",
+        "広告はこれから始める",
+        "わからない / 相談したい",
       ],
     },
-    // Q5 CV種別
     {
       question: "達成したい成果（CV）を教えてください",
       type: "select",
@@ -188,39 +158,38 @@ const QUESTION_SETS: Record<string, Question[]> = {
         "その他 / 相談したい",
       ],
     },
-    // Q6 集客方法
     {
-      question: "想定する集客方法を教えてください",
-      type: "multiSelect",
-      subtitle: "複数選択可",
+      question: "メインの集客チャンネルを教えてください",
+      type: "select",
       options: [
-        "Instagram",
+        "Instagram / SNS",
         "Google広告",
-        "Meta広告（Instagram / Facebook）",
+        "Meta広告（Facebook / Instagram）",
         "LINE",
         "チラシ / QRコード",
-        "既存顧客への案内",
         "SEO（検索流入）",
         "未定 / 相談したい",
       ],
     },
-    // Q7 素材の準備状況
     {
-      question: "手元にある素材を教えてください",
-      type: "multiSelect",
-      subtitle: "複数選択可",
+      question: "素材の準備状況を教えてください",
+      type: "select",
       options: [
-        "商品 / サービス内容は整理できている",
-        "写真素材がある",
-        "動画素材がある",
-        "お客様の声（レビュー）がある",
-        "実績データがある",
-        "原稿（文章）がある",
+        "ほぼ揃っている（商品説明・写真・実績など）",
+        "一部ある",
         "何もない（壁打ちから相談したい）",
-        "わからない",
       ],
     },
-    // Q8 予算感
+    {
+      question: "希望する時期を教えてください",
+      type: "select",
+      options: [
+        "できるだけ早く（2週間以内）",
+        "1か月以内",
+        "2〜3か月以内",
+        "時期は未定（まず相談したい）",
+      ],
+    },
     {
       question: "予算の目安を教えてください",
       type: "select",
@@ -236,7 +205,6 @@ const QUESTION_SETS: Record<string, Question[]> = {
   ],
 
   "未定 / 相談したい": [
-    // Q2 目的（簡易）→ 単一選択に変更
     {
       question: "今回の目的に近いものはどれですか？",
       type: "select",
@@ -246,19 +214,16 @@ const QUESTION_SETS: Record<string, Question[]> = {
         "まだ何が必要かわからない",
       ],
     },
-    // Q3 現在の状況（簡易）
     {
-      question: "現在の状況を教えてください",
-      type: "multiSelect",
-      subtitle: "複数選択可",
+      question: "現在のWeb状況を教えてください",
+      type: "select",
       options: [
-        "まだ何もない",
+        "何もない（今が最初の一歩）",
         "SNSはある",
-        "既存ページはあるが弱いと感じる",
+        "既存ページはあるが弱い",
         "わからない",
       ],
     },
-    // Q4 希望時期
     {
       question: "希望する時期を教えてください",
       type: "select",
@@ -269,37 +234,26 @@ const QUESTION_SETS: Record<string, Question[]> = {
         "時期は未定（まず相談したい）",
       ],
     },
-    // Q5 手元の素材
     {
-      question: "手元にある素材・情報を教えてください",
-      type: "multiSelect",
-      subtitle: "複数選択可",
+      question: "素材の準備状況を教えてください",
+      type: "select",
       options: [
-        "ロゴ",
-        "写真素材",
-        "商品 / サービスの説明文",
-        "チラシ・資料",
+        "ほぼ揃っている（ロゴ・写真・文章）",
+        "一部ある",
         "何もない（整理から相談したい）",
-        "わからない",
       ],
     },
-    // Q6 優先したいこと
     {
-      question: "優先したいことはありますか？",
+      question: "優先したいことを教えてください",
       type: "select",
-      subtitle: "推奨",
       options: [
         "会社・お店の信頼性を上げたい",
         "問い合わせを増やしたい",
         "採用を強化したい",
-        "商品・サービスをわかりやすく伝えたい",
-        "資料請求を増やしたい",
-        "集客をしたい",
-        "とりあえず早く公開したい",
+        "集客・広告を始めたい",
         "まだ整理できていない / 相談したい",
       ],
     },
-    // Q7 予算感
     {
       question: "予算の目安を教えてください",
       type: "select",
@@ -481,9 +435,6 @@ export default function EstimateForm() {
   const [currentQ, setCurrentQ] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
   const [currentAnswer, setCurrentAnswer] = useState("");
-  // multiSelect用: 現在選択中の項目
-  const [multiSelected, setMultiSelected] = useState<string[]>([]);
-  // 連絡先情報
   const [contact, setContact] = useState<ContactInfo>({
     name: "",
     company: "",
@@ -511,19 +462,11 @@ export default function EstimateForm() {
     setAnswers(new Array(qs.length).fill(""));
     setCurrentQ(0);
     setCurrentAnswer("");
-    setMultiSelected([]);
     advance("forward");
     setPhase("questions");
   };
 
-  // multiSelectトグル
-  const toggleMultiSelect = (opt: string) => {
-    setMultiSelected((prev) =>
-      prev.includes(opt) ? prev.filter((o) => o !== opt) : [...prev, opt]
-    );
-  };
-
-  // 回答して次へ
+  // 単一選択 → クリックで即遷移
   const answerAndAdvance = (answer: string) => {
     const newAnswers = [...answers];
     newAnswers[currentQ] = answer;
@@ -531,27 +474,12 @@ export default function EstimateForm() {
 
     if (currentQ < questions.length - 1) {
       advance("forward");
-      const nextQ = currentQ + 1;
-      setCurrentQ(nextQ);
-      setCurrentAnswer("");
-      // 次の質問がmultiSelectなら既存回答を復元
-      if (questions[nextQ].type === "multiSelect") {
-        const existing = newAnswers[nextQ];
-        setMultiSelected(existing ? existing.split("、") : []);
-      } else {
-        setMultiSelected([]);
-      }
+      setCurrentQ(currentQ + 1);
+      setCurrentAnswer(newAnswers[currentQ + 1] || "");
     } else {
-      // 最後の質問 → メールアドレスページへ
       advance("forward");
       setPhase("email");
     }
-  };
-
-  // multiSelect確定
-  const confirmMultiSelect = () => {
-    const answer = multiSelected.join("、");
-    answerAndAdvance(answer);
   };
 
   // メールページから連絡先ページへ
@@ -576,33 +504,18 @@ export default function EstimateForm() {
         const prevIdx = currentQ - 1;
         advance("backward");
         setCurrentQ(prevIdx);
-        // 前の質問の回答を復元
-        if (questions[prevIdx].type === "multiSelect") {
-          const existing = answers[prevIdx];
-          setMultiSelected(existing ? existing.split("、") : []);
-        } else {
-          setCurrentAnswer(answers[prevIdx] || "");
-          setMultiSelected([]);
-        }
+        setCurrentAnswer(answers[prevIdx] || "");
       } else {
         advance("backward");
         setPhase("systemType");
       }
     } else if (phase === "email") {
-      // メールページ → 最後の質問に戻る
       const lastQ = questions.length - 1;
       advance("backward");
       setCurrentQ(lastQ);
-      if (questions[lastQ].type === "multiSelect") {
-        const existing = answers[lastQ];
-        setMultiSelected(existing ? existing.split("、") : []);
-      } else {
-        setCurrentAnswer(answers[lastQ] || "");
-        setMultiSelected([]);
-      }
+      setCurrentAnswer(answers[lastQ] || "");
       setPhase("questions");
     } else if (phase === "contact") {
-      // 連絡先 → メールページに戻る
       advance("backward");
       setPhase("email");
     }
@@ -641,7 +554,7 @@ export default function EstimateForm() {
   };
 
   // プログレスバー
-  const totalSteps = 1 + questions.length + 1 + 1; // Q1 + questions + email + contact
+  const totalSteps = 1 + questions.length + 1 + 1;
   let currentStep = 0;
   if (phase === "systemType") currentStep = 0;
   else if (phase === "questions") currentStep = 1 + currentQ;
@@ -649,7 +562,6 @@ export default function EstimateForm() {
   else if (phase === "contact") currentStep = totalSteps;
   const progressPct = totalSteps > 0 ? (currentStep / totalSteps) * 100 : 0;
 
-  // ルート表示名（短縮）
   const routeLabel = systemType === "未定 / 相談したい" ? "相談" : systemType === "LP（広告用の1枚ページ）" ? "LP" : "HP";
 
   return (
@@ -670,12 +582,12 @@ export default function EstimateForm() {
           className={`flex-1 flex flex-col ${direction === "forward" ? "step-forward" : "step-backward"}`}
         >
 
-          {/* ======== フェーズ: Q1 ルート選択 ======== */}
+          {/* ======== Q1: ルート選択 ======== */}
           {phase === "systemType" && (
             <div>
               <div className="mb-6">
                 <h2 className="text-base font-bold text-gray-900">作りたいものを教えてください</h2>
-                <p className="text-xs text-gray-400 mt-0.5">最も近いものを選択してください</p>
+                <p className="text-xs text-gray-400 mt-0.5">選択するとすぐに次に進みます</p>
               </div>
               <div className="space-y-3">
                 {SYSTEM_TYPES.map(({ label, icon, desc }) => (
@@ -705,7 +617,7 @@ export default function EstimateForm() {
             </div>
           )}
 
-          {/* ======== フェーズ: 質問 ======== */}
+          {/* ======== 質問フェーズ（すべて単一選択・即遷移） ======== */}
           {phase === "questions" && questions.length > 0 && (
             <div className="flex flex-col flex-1">
               <div className="mb-1 flex items-center justify-between">
@@ -751,55 +663,7 @@ export default function EstimateForm() {
                 </div>
               )}
 
-              {/* 複数選択 */}
-              {questions[currentQ].type === "multiSelect" && (
-                <div className="flex flex-col flex-1">
-                  <div className="space-y-2 flex-1">
-                    {questions[currentQ].options!.map((opt) => {
-                      const selected = multiSelected.includes(opt);
-                      return (
-                        <button
-                          key={opt}
-                          type="button"
-                          onClick={() => toggleMultiSelect(opt)}
-                          className="flex items-center gap-3 w-full px-4 py-3.5 rounded-2xl border-2 text-left text-sm font-medium text-gray-700 transition-all duration-200"
-                          style={{
-                            borderColor: selected ? TEAL_BORDER : "#e2e8f0",
-                            backgroundColor: selected ? TEAL_BG : "#f8fafc",
-                          }}
-                        >
-                          {/* チェックボックス */}
-                          <div
-                            className="w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all duration-200"
-                            style={{
-                              borderColor: selected ? TEAL : "#d1d5db",
-                              backgroundColor: selected ? TEAL : "white",
-                            }}
-                          >
-                            {selected && (
-                              <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                              </svg>
-                            )}
-                          </div>
-                          <span>{opt}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={confirmMultiSelect}
-                    disabled={multiSelected.length === 0}
-                    className="mt-4 w-full font-semibold py-3.5 rounded-full text-sm text-white transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
-                    style={{ backgroundColor: TEAL, boxShadow: multiSelected.length > 0 ? `0 4px 14px ${TEAL}44` : "none" }}
-                  >
-                    {currentQ < questions.length - 1 ? "次の質問へ" : "入力完了"}
-                  </button>
-                </div>
-              )}
-
-              {/* テキスト入力 */}
+              {/* テキスト入力（残存） */}
               {questions[currentQ].type === "text" && (
                 <div className="flex flex-col flex-1">
                   <textarea
@@ -832,10 +696,9 @@ export default function EstimateForm() {
             </div>
           )}
 
-          {/* ======== フェーズ: メールアドレス ======== */}
+          {/* ======== メールアドレス ======== */}
           {phase === "email" && (
             <div className="flex flex-col flex-1">
-              {/* 完了アイコン */}
               <div className="text-center mb-6">
                 <div
                   className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
@@ -900,7 +763,7 @@ export default function EstimateForm() {
             </div>
           )}
 
-          {/* ======== フェーズ: 連絡先 ======== */}
+          {/* ======== 連絡先 ======== */}
           {phase === "contact" && (
             <form onSubmit={submitEstimate} className="flex flex-col flex-1">
               <div className="mb-5">
@@ -932,7 +795,6 @@ export default function EstimateForm() {
 
               {/* 連絡先フォーム */}
               <div className="space-y-3">
-                {/* お名前 */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 mb-1.5">
                     お名前 <span className="text-red-400">*</span>
@@ -949,7 +811,6 @@ export default function EstimateForm() {
                   />
                 </div>
 
-                {/* 電話番号 */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 mb-1.5">
                     電話番号 <span className="text-red-400">*</span>
@@ -966,7 +827,6 @@ export default function EstimateForm() {
                   />
                 </div>
 
-                {/* 会社名 */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 mb-1.5">
                     会社名 / 屋号
