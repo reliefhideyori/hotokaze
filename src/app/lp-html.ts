@@ -1371,17 +1371,17 @@ const LP_HTML = `
 <section id="hero">
   <div class="hero-kanji-sail">帆</div>
   <div class="hero-content">
-    <div class="hero-tag">LPグロース型 HP/LP制作事業</div>
+    <div class="hero-tag">AI活用 × 導線設計 × 結果コミット</div>
 
     <h1 class="hero-mission">
-      <span style="display:block;">あなたの熱量を<span class="accent-line">帆</span>に、</span>
-      <span style="display:block; white-space:nowrap; word-break:keep-all;">テクノロジーを<span class="accent-line">風</span>にして、</span>
-      <span style="display:block;">共に新しい海へ。</span>
+      <span class="accent-line" style="display:block;">売れるLPを、</span>
+      <span style="display:block;">半分のコストで。</span>
     </h1>
 
     <p class="hero-sub">
-      単なる外注業者ではなく、同じ船に乗る伴走者として。<br>
-      AIの力でスピードを最大化し、戦略と検証で確実な成果へ。
+      「高いお金をかけたのに、問い合わせが来ない」<br>
+      LPだけでは、売れる仕組みにはなりません。<br>
+      集客から問い合わせまでを丸ごと設計し、本当に売れるLPをコスパ良く。
     </p>
 
     <div class="hero-btns">
