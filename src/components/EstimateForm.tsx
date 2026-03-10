@@ -541,9 +541,24 @@ export default function EstimateForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ systemType, qa, contact }),
       });
+      const data = await res.json();
       if (!res.ok) {
-        const data = await res.json();
         throw new Error(data.error || "送信に失敗しました。");
+      }
+      // 見積もりデータを sessionStorage に保存して complete ページで表示
+      if (data.estimate) {
+        sessionStorage.setItem(
+          "hotokaze_estimate",
+          JSON.stringify({
+            estimate: data.estimate,
+            systemType,
+            contact: {
+              name: contact.name,
+              company: contact.company,
+              email: contact.email,
+            },
+          })
+        );
       }
       router.push("/estimate/complete");
     } catch (err) {
