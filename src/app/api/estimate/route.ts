@@ -237,22 +237,22 @@ export async function POST(req: NextRequest) {
     }
     console.log("[3] JSON パース完了");
 
-    // ── [3] PDF 生成 ───────────────────────────────────────
+    // ── [3] PDF 生成（失敗してもメール送信は続行） ─────────
     console.log("[4] PDF生成開始");
     const dateStr = new Date().toLocaleDateString("ja-JP", {
       year: "numeric",
       month: "long",
       day: "numeric",
     });
-    let pdfBuffer: Buffer;
+    let pdfBuffer: Buffer | undefined;
     try {
       pdfBuffer = await generateEstimatePdf(systemType, est, contact, dateStr);
+      console.log("[5] PDF生成完了");
     } catch (e) {
       const errMsg = e instanceof Error ? e.message : String(e);
-      console.error("[ERROR] PDF生成:", errMsg, e);
-      return NextResponse.json({ error: `PDF生成に失敗しました: ${errMsg}` }, { status: 500 });
+      console.error("[WARN] PDF生成失敗（メール送信は続行）:", errMsg);
+      // PDF失敗でもエラーにしない — メールのみ送信に切り替え
     }
-    console.log("[5] PDF生成完了");
 
     // ── [4] メール送信 ─────────────────────────────────────
     console.log("[6] Resend メール送信開始");
@@ -261,12 +261,16 @@ export async function POST(req: NextRequest) {
       to: contact.email,
       subject: `【AI見積もり】${systemType}の概算見積もりをお届けします | Hotokaze`,
       html: buildSimpleEmailHtml(systemType, est, contact),
-      attachments: [
-        {
-          filename: "Hotokaze_AI見積もり.pdf",
-          content: pdfBuffer,
-        },
-      ],
+      ...(pdfBuffer
+        ? {
+            attachments: [
+              {
+                filename: "Hotokaze_AI見積もり.pdf",
+                content: pdfBuffer,
+              },
+            ],
+          }
+        : {}),
     };
     if (process.env.TO_EMAIL) sendOptions.cc = process.env.TO_EMAIL;
 

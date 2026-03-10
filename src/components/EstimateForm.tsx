@@ -541,7 +541,17 @@ export default function EstimateForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ systemType, qa, contact }),
       });
-      const data = await res.json();
+      // レスポンスが非JSONの場合（タイムアウト等）に備えて安全にパース
+      let data: { success?: boolean; estimate?: unknown; error?: string } = {};
+      try {
+        data = await res.json();
+      } catch {
+        throw new Error(
+          res.status === 504
+            ? "処理に時間がかかりすぎました。しばらく後でお試しください。"
+            : "サーバーエラーが発生しました。しばらく後でお試しください。"
+        );
+      }
       if (!res.ok) {
         throw new Error(data.error || "送信に失敗しました。");
       }
